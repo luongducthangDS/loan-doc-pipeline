@@ -93,7 +93,7 @@ MVP hỗ trợ 4 loại giấy tờ bắt buộc. Model chỉ **chép lại** nh
 
 | Kiểu | Quy tắc |
 |---|---|
-| Họ tên | Unicode NFC, viết hoa, gộp khoảng trắng. **Giữ dấu**, vì sai dấu là một sai lệch thật |
+| Họ tên | Unicode NFC, viết hoa, gộp khoảng trắng. **Giữ dấu**, vì sai dấu là một sai lệch thật. So khớp hybrid: nếu một bên hoàn toàn không dấu (sao kê in tên không dấu, đơn viết không dấu) thì so sau khi bỏ dấu |
 | Ngày | ISO YYYY-MM-DD. Ngày không hợp lệ → null + lỗi validate |
 | Tiền | Số nguyên VND, bỏ dấu chấm/phẩy phân tách và chữ "đ", "VNĐ" |
 | Số CCCD | Đúng 12 chữ số, sai định dạng → lỗi validate |
@@ -205,7 +205,7 @@ Có 9 rule, mỗi rule là một hàm Python thuần, trả về pass, fail ho�
 | Rule | Kiểm tra | Nguồn so khớp | Tolerance (mặc định) | Khi fail |
 |---|---|---|---|---|
 | R0 | Đủ 4 giấy tờ bắt buộc, ảnh đọc được | Bundle | Không có | REQUEST_MORE |
-| R1 | Họ tên trùng nhau | Đơn = CCCD = HĐLĐ = chủ TK sao kê | Khớp tuyệt đối sau chuẩn hóa, giữ dấu | REVIEW |
+| R1 | Họ tên trùng nhau | Đơn = CCCD = HĐLĐ = chủ TK sao kê | Khớp sau chuẩn hóa, giữ dấu; bên hoàn toàn không dấu thì so sau khi bỏ dấu (hybrid, mục 4) | REVIEW |
 | R2 | Số CCCD trùng nhau | Đơn = CCCD | Khớp tuyệt đối | REVIEW |
 | R3 | Ngày sinh trùng nhau | Đơn = CCCD | Khớp tuyệt đối | REVIEW |
 | R4 | Thu nhập khai không vượt thực nhận | Đơn ≤ lương TB 3 tháng từ sao kê × (1 + t) | t = 10% | REVIEW |

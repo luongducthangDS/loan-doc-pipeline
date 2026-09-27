@@ -72,7 +72,6 @@ ingest ─► tiền xử lý ─► trích xuất (VLM, từng giấy tờ) ─
 
 | Điểm | Spec | Repo | Lý do |
 |---|---|---|---|
-| So khớp tên (R1) | Khớp tuyệt đối, giữ dấu | **Hybrid**: khớp có dấu → pass; một bên *hoàn toàn* không dấu → so sau khi bỏ dấu; cả hai có dấu mà khác → fail | Sao kê in tên không dấu, đơn thường viết không dấu. Giữ dấu tuyệt đối thì mọi bộ hồ sơ đều fail R1. Vẫn bắt được E1 "sai 1 dấu" giữa đơn và CCCD. |
 | Render | HTML + Jinja2 → WeasyPrint/Playwright | PIL | Không cần dependency hệ thống, chạy trên Windows. Nâng cấp nếu extractor đạt ~100% (test quá dễ). |
 | Profile | Faker vi_VN | Danh sách tự soạn | Faker vi_VN sinh tên/địa chỉ kém tự nhiên; bớt một dependency. |
 | Định dạng ảnh | PNG | JPEG (q95/q60/q75 theo mức) | PNG của ảnh nhiễu ~5–10 lần nặng hơn; JPEG chất lượng thấp vốn là một phần của augmentation. |
