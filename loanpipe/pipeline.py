@@ -61,6 +61,7 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
     t = time.perf_counter()
     extractions: list[Extraction] = []
     model_outputs: dict[str, str | None] = {}
+    extract_errors: dict[str, list[str]] = {}
     cost = 0.0
     for d in inp.docs:
         if d.doc_type in unreadable:
@@ -77,6 +78,8 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
         runs = [r for r in (r1, r2) if r is not None]
         cost += sum(r.cost_usd for r in runs)
         model_outputs[d.doc_id] = r1.model_output
+        if errs := [e for r in runs for e in r.errors]:
+            extract_errors[d.doc_id] = errs
         extractions.append(Extraction(
             bundle_id=inp.bundle_id, doc_id=d.doc_id, doc_type=d.doc_type, fields=fields,
             model=extractor.name, prompt_version=extractor.prompt_version,
@@ -99,6 +102,7 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
         "unreadable": [d.value for d in unreadable],
         "extractions": [e.model_dump(mode="json") for e in extractions],
         "model_outputs": model_outputs,
+        "extract_errors": extract_errors,
         "checks": [c.model_dump(mode="json") for c in checks],
         "decision": decision.model_dump(mode="json"),
     }

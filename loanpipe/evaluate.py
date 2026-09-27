@@ -15,7 +15,8 @@ import json
 import math
 import statistics
 import subprocess
-from collections import Counter, defaultdict
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -180,6 +181,7 @@ def compute_metrics(entries: list[dict], traces: dict[str, dict], thr) -> tuple[
         "latency_p95_ms": lat[min(len(lat) - 1, math.ceil(0.95 * len(lat)) - 1)] if lat else None,
         "calls_per_bundle": statistics.mean(t["n_calls"] for t in traces.values()) if traces else None,
         "cost_per_bundle_usd": statistics.mean(t["cost_usd"] for t in traces.values()) if traces else None,
+        "docs_extract_failed": sum(len(t.get("extract_errors", {})) for t in traces.values()),
     }
     return {"extraction": extraction, "rules": rules, "end_to_end": end_to_end, "ops": ops}, errors_csv
 
@@ -225,7 +227,8 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
     L += ["", "## Vận hành", "",
           f"- Latency p50 / p95: {ops['latency_p50_ms']} / {ops['latency_p95_ms']} ms",
           f"- Số lần gọi model mỗi bộ: {ops['calls_per_bundle']}",
-          f"- Chi phí mỗi bộ: ${ops['cost_per_bundle_usd']:.4f}", ""]
+          f"- Chi phí mỗi bộ: ${ops['cost_per_bundle_usd']:.4f}",
+          f"- Giấy tờ trích xuất lỗi (API/JSON, sau retry): {ops['docs_extract_failed']}", ""]
     return "\n".join(L)
 
 
@@ -247,10 +250,14 @@ def main() -> None:
     ap.add_argument("--data", type=Path, default=Path("data/synthetic"))
     ap.add_argument("--out", type=Path, default=Path("reports"))
     ap.add_argument("--no-file-check", action="store_true", help="bỏ kiểm ảnh (khi sinh bằng --no-images)")
+    ap.add_argument("--augment", choices=["clean", "scan", "photo"], help="chỉ chạy các bộ có mức này (gate M2: clean)")
+    ap.add_argument("--limit", type=int, help="chỉ chạy N bộ đầu (spike, tiết kiệm chi phí API)")
+    ap.add_argument("--workers", type=int, default=1, help="số bộ chạy song song (VLM qua API)")
     args = ap.parse_args()
 
     split_dir = args.data / args.split
     entries = [json.loads(line) for line in (split_dir / "manifest.jsonl").read_text("utf-8").splitlines()]
+    entries = [e for e in entries if not args.augment or e["augment"] == args.augment][:args.limit]
     rules_cfg, thr = load_rules(), load_thresholds()
     kw = {"manifest": entries} if args.extractor == "oracle" else {}
     extractor = get_extractor(args.extractor, **kw)
@@ -258,15 +265,18 @@ def main() -> None:
     run_id = f"{datetime.now():%Y%m%d-%H%M%S}_{args.split}_{extractor.name}"
     out = args.out / run_id
     (out / "traces").mkdir(parents=True)
-    traces = {}
-    for e in entries:
+    def one(e: dict) -> dict:
         t = run_bundle(bundle_input_from_manifest(e, split_dir), extractor, rules_cfg, thr,
                        check_files=not args.no_file_check)
-        traces[e["bundle_id"]] = t
         (out / "traces" / f"{e['bundle_id']}.json").write_text(json.dumps(t, ensure_ascii=False, indent=1), "utf-8")
+        return t
+
+    with ThreadPoolExecutor(args.workers) as pool:
+        traces = {e["bundle_id"]: t for e, t in zip(entries, pool.map(one, entries))}
 
     metrics, errs = compute_metrics(entries, traces, thr)
-    meta = {"run_id": run_id, "split": args.split, "n_bundles": len(entries), "model": extractor.name,
+    meta = {"run_id": run_id, "split": args.split, "filter": f"augment={args.augment} limit={args.limit}",
+            "n_bundles": len(entries), "model": extractor.name,
             "prompt_version": extractor.prompt_version, "rules_version": rules_cfg.version,
             "thresholds_version": thr.version, "git_commit": git_commit()}
     index = args.out / "runs.csv"

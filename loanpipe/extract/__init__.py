@@ -7,6 +7,7 @@ model có thể "sửa" tên trên đơn cho khớp CCCD và che mất sai lệc
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol
@@ -34,8 +35,21 @@ class Extractor(Protocol):
         ...
 
 
+def load_dotenv(path: Path = Path(".env")) -> None:
+    """Nạp .env vào os.environ (không ghi đè biến đã có). ponytail: không hỗ trợ quote/multiline."""
+    if path.exists():
+        for line in path.read_text("utf-8").splitlines():
+            k, sep, v = line.partition("=")
+            if sep and not k.strip().startswith("#"):
+                os.environ.setdefault(k.strip(), v.strip())
+
+
 def get_extractor(name: str, **kw) -> Extractor:
     if name == "oracle":
         from loanpipe.extract.oracle import OracleExtractor
         return OracleExtractor(**kw)
-    raise ValueError(f"extractor chưa có: {name!r}. VLM thêm ở M2 (xem README).")
+    if name == "vlm":
+        from loanpipe.extract.vlm import from_env
+        load_dotenv()
+        return from_env()
+    raise ValueError(f"extractor không có: {name!r} (oracle | vlm)")

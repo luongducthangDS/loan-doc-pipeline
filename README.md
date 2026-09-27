@@ -12,9 +12,9 @@ Spec đầy đủ: [`docs/spec.md`](docs/spec.md). Cách sinh dữ liệu và gi
 
 | Giai đoạn | Nội dung | Trạng thái |
 |---|---|---|
-| M0 | Xác minh bài toán với 2–3 cán bộ tín dụng (A1, A2) | ⏳ chưa làm |
+| M0 | Xác minh bài toán với 2–3 cán bộ tín dụng (A1, A2) | ⏳ bộ câu hỏi sẵn: [`docs/m0_interview.md`](docs/m0_interview.md) |
 | M1 | Bộ sinh dữ liệu: 3 layout/loại (C held-out), lỗi E1–E8, near-miss, 3 mức augmentation, manifest | ✅ |
-| M2 | Spike trích xuất VLM, gate: field quan trọng ≥ 90% trên dev clean | ⏳ **gate quyết định** |
+| M2 | Spike trích xuất VLM, gate: field quan trọng ≥ 90% trên dev clean | 🔧 extractor xong, **chưa chạy với model thật** |
 | M3 | Rule R0–R8, router, trace JSON, `make eval` | ✅ phần tất định, đã kiểm bằng oracle |
 | M4 | Review UI Streamlit, chạy test đóng băng 1 lần, demo | ⏳ |
 
@@ -35,7 +35,7 @@ Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. K�
 
 ```bash
 pip install -r requirements.txt
-pytest -q                                            # 90 test, ~15 giây
+pytest -q                                            # 95 test, ~15 giây
 
 python -m datagen.build --seed 42                    # dev 50 + test 300 kèm ảnh -> data/synthetic/  (vài phút)
 python -m loanpipe.evaluate --split dev --extractor oracle
@@ -88,7 +88,7 @@ loanpipe/
   router.py       # 3 nhánh, theo thứ tự spec mục 8
   pipeline.py     # workflow 6 bước + trace JSON
   evaluate.py     # eval 3 tầng, report.md / metrics.json / errors.csv, so với run trước
-  extract/        # giao diện Extractor + oracle; VLM thêm ở M2
+  extract/        # giao diện Extractor, oracle (cận trên), vlm (API tương thích OpenAI)
 config/
   rules.yaml      # tolerance, regex giao dịch lương      (rules_version)
   thresholds.yaml # field quan trọng, tự nhất quán       (thresholds_version)
@@ -101,8 +101,23 @@ scripts/check_data_paths.py   # CI chặn ảnh/PDF ngoài data/synthetic/
 docs/spec.md, docs/data_card.md
 ```
 
+## M2: chạy spike VLM
+
+Extractor `vlm` gọi API tương thích OpenAI (mặc định FPT AI Marketplace, `Qwen2.5-VL-7B-Instruct`; đổi `VLM_API_BASE` sang vLLM local nếu tự host). Mỗi lần gọi một giấy tờ; lỗi mạng hoặc output không phải JSON thì thử lại 1 lần rồi để field trống → REVIEW. Kết quả được cache trong `.cache/vlm/`, nên đổi ngưỡng rồi chạy lại eval không tốn thêm tiền.
+
+```bash
+cp .env.example .env        # điền VLM_API_KEY, giá token; ĐẶT GIỚI HẠN CHI TIÊU phía nhà cung cấp
+python -m loanpipe.evaluate --split dev --extractor vlm --augment clean --limit 5          # ước chi phí
+python -m loanpipe.evaluate --split dev --extractor vlm --augment clean --workers 4        # gate M2
+python -m loanpipe.evaluate --split dev --extractor vlm --workers 4                         # đủ 3 mức ảnh
+```
+
+**Gate M2:** dòng "Field quan trọng" trong `report.md` của lần chạy `--augment clean` ≥ 90%. Không đạt → đổi model (vd Qwen3-VL-8B), chưa đi tiếp. Mỗi bộ tốn khoảng 8 lần gọi (4 giấy tờ × 2 lượt tự nhất quán); đặt `use_self_consistency: false` trong `config/thresholds.yaml` để giảm một nửa, nhưng chỉ giữ nếu escape rate trên dev không tăng.
+
+Khi đọc kết quả, xem `errors.csv` (field sai: giá trị kỳ vọng vs model đọc) và `traces/*.json` (`model_outputs` là output thô của model).
+
 ## Việc tiếp theo
 
-1. **M0**: hỏi 2–3 cán bộ tín dụng về quy trình và thời gian mỗi bộ (chỉ hỏi quy trình, không lấy dữ liệu). Nếu A1 sai, dự án mất phần "so what".
-2. **M2**: viết `loanpipe/extract/vlm.py` (prompt sinh từ schema, JSON output, retry 1 lần), chạy dev, đo accuracy theo field × layout × augmentation và chi phí mỗi bộ. Gate: field quan trọng ≥ 90% trên dev clean; không đạt thì đổi model, chưa đi tiếp.
+1. **M0**: phỏng vấn theo [`docs/m0_interview.md`](docs/m0_interview.md). Nếu ngân hàng đã có OCR/eKYC điền sẵn field, kể lại dự án quanh đối chiếu chéo + routing thay vì trích xuất.
+2. **M2**: chạy spike ở trên, qua gate thì phân tích lỗi theo field × layout × augmentation trên dev.
 3. Vẽ đường cong automation vs escape trên dev (có/không tự nhất quán, danh sách field quan trọng khác nhau), chọn điểm vận hành, rồi mới chạy test một lần.
