@@ -1,0 +1,14 @@
+# Tolerance là GIẢ ĐỊNH cho demo, không phải chính sách tín dụng của ngân hàng nào (spec mục 7).
+version: rules-v1
+
+# R4: regex trên mô tả giao dịch ĐÃ bỏ dấu + viết hoa. Dùng word boundary để không bắt
+# nhầm người họ Lương ("NHAN CK TU LUONG VAN AN").
+salary_patterns:
+  - '\bCT LUONG\b'
+  - '\bTRA LUONG\b'
+  - '\bLUONG T\d{1,2}\b'
+  - '\bSALARY\b'
+income_tolerance: 0.10          # R4: khai <= lương TB x (1 + t)
+
+statement_max_age_days: 30      # R8: ngay_ky - ky_den <= 30 ngày
+statement_min_months: 3         # R8: sao kê phủ >= 3 tháng

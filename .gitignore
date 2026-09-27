@@ -1,5 +1,11 @@
-data/
 __pycache__/
 .pytest_cache/
 .venv/
 .env
+reports/
+
+# Chỉ dữ liệu synthetic được phép vào repo, và chỉ bộ mẫu nhỏ cho demo
+data/*
+!data/synthetic/
+data/synthetic/*
+!data/synthetic/samples/

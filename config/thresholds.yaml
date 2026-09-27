@@ -1,0 +1,16 @@
+# Cấu hình router (spec mục 8). Đổi file này = đổi thresholds_version.
+version: thr-v1
+
+# Field quan trọng: họ tên, số CCCD, ngày sinh, ngày hết hạn CCCD, thu nhập, số tài khoản.
+critical_fields:
+  cccd: [ho_ten, so_cccd, ngay_sinh, ngay_het_han]
+  don_vay: [ho_ten, so_cccd, ngay_sinh, thu_nhap_thang, so_tk_nhan_luong, ngay_ky]
+  hdld: [ho_ten_nld]
+  sao_ke: [chu_tk, so_tk, giao_dich]
+
+# >= N field quan trọng lỗi định dạng -> REQUEST_MORE (ảnh quá xấu, xin nộp lại)
+request_more_min_format_errors: 3
+
+# Tín hiệu tự nhất quán: trích field quan trọng 2 lần rồi so. Chỉ tắt sau khi đo trên dev
+# rằng tắt không làm tăng escape rate.
+use_self_consistency: true
