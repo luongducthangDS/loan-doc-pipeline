@@ -1,5 +1,5 @@
 # Tolerance là GIẢ ĐỊNH cho demo, không phải chính sách tín dụng của ngân hàng nào (spec mục 7).
-version: rules-v1
+version: rules-v2  # v2: R4 unknown khi 1 tháng có >= 2 khoản lương
 
 # R4: regex trên mô tả giao dịch ĐÃ bỏ dấu + viết hoa. Dùng word boundary để không bắt
 # nhầm người họ Lương ("NHAN CK TU LUONG VAN AN").

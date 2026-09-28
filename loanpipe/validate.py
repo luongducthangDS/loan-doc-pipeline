@@ -10,6 +10,8 @@ KHÔNG dùng việc khớp giữa các giấy tờ làm tín hiệu: rule đã k
 from __future__ import annotations
 
 import json
+import operator
+import unicodedata
 from collections.abc import Callable
 from typing import Any
 
@@ -67,10 +69,33 @@ NORMALIZERS: dict[str, Callable[[str], Any]] = {
 }
 
 
+GARBLED = "ký tự lạ"
+# dấu thanh + mũ/móc/trăng của chữ Việt, dạng tách (NFD)
+_VI_MARKS = set("̛̣̀́̃̉̂̆")
+
+
+def foreign_chars(s: str) -> str:
+    """Ký tự không thuộc chữ Việt/ASCII/dấu câu. Khi ảnh xấu, model có thể trả rác mà vẫn là JSON hợp lệ
+    (gặp thật: "CÐNG TY Cố PHâN THÐNG MàI BကC NAM"). Chỉ bắt được ký tự lạ, không bắt sai chính tả."""
+    bad = []
+    for c in unicodedata.normalize("NFC", s):
+        base, *marks = unicodedata.normalize("NFD", c)
+        if (c.isascii() or c in "đĐ" or unicodedata.category(c)[0] in "PZS"
+                or (base.isascii() and base.isalpha() and marks and set(marks) <= _VI_MARKS)):
+            continue
+        bad.append(c)
+    return "".join(bad)
+
+
 def finalize_field(kind: str, raw: str | None, page: int | None = None,
-                   second_raw: str | None = None, check_consistency: bool = False) -> Field:
+                   second_raw: str | None = None, check_consistency: bool = False,
+                   same: Callable[[Any, Any], bool] = operator.eq) -> Field:
+    """`same`: hai lần trích được coi là nhất quán khi nào. Mặc định bằng nhau tuyệt đối; sao kê chỉ so
+    phần rule đọc (lương từng tháng), vì đòi ~25 dòng ghi nợ trùng khớp chỉ đẩy bộ sạch sang REVIEW."""
     if raw is None or not str(raw).strip():
         return Field(value=None, raw=raw, confidence="low", page=page)  # model không thấy field
+    if kind in ("name", "text") and (bad := foreign_chars(str(raw))):
+        return Field(value=None, raw=raw, confidence="low", page=page, error=f"{GARBLED}: {bad!r}")
     try:
         value = NORMALIZERS[kind](raw)
     except (ValueError, KeyError, TypeError) as e:  # json lỗi cũng là ValueError
@@ -78,7 +103,7 @@ def finalize_field(kind: str, raw: str | None, page: int | None = None,
     consistent = True
     if check_consistency:
         try:
-            consistent = second_raw is not None and NORMALIZERS[kind](second_raw) == value
+            consistent = second_raw is not None and same(NORMALIZERS[kind](second_raw), value)
         except (ValueError, KeyError, TypeError):
             consistent = False
     return Field(value=value, raw=raw, confidence="high" if consistent else "low", page=page)

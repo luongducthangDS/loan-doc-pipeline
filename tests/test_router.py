@@ -5,6 +5,7 @@ from conftest import F
 from loanpipe.router import route
 from loanpipe.rules import BundleView, run_rules
 from loanpipe.schemas import DocType
+from loanpipe.validate import GARBLED
 
 D = DocType
 
@@ -47,4 +48,12 @@ def test_low_conf_critical_field_goes_to_review(docs, cfg, thr):
 
 def test_low_conf_non_critical_does_not_block(docs, cfg, thr):
     docs[D.DON_VAY]["muc_dich"] = F("Mua xe", conf="low")
+    assert decide(docs, cfg, thr).route == "AUTO_PASS"
+
+
+def test_garbled_non_critical_field_goes_to_review(docs, cfg, thr):
+    """Field không rule nào đọc (tên công ty trên đơn) mà là chữ rác -> không được auto-pass dữ liệu rác."""
+    docs[D.DON_VAY]["ten_cong_ty"] = F(None, conf="low", error=f"{GARBLED}: 'က'")
+    assert (decide(docs, cfg, thr).route, decide(docs, cfg, thr).reasons) == ("REVIEW", ["GARBLED:don_vay.ten_cong_ty"])
+    docs[D.DON_VAY]["ten_cong_ty"] = F(None, conf="low", error="sai định dạng")  # lỗi thường ở field phụ: như cũ
     assert decide(docs, cfg, thr).route == "AUTO_PASS"

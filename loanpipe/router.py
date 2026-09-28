@@ -8,6 +8,7 @@ from __future__ import annotations
 from loanpipe.config import RulesConfig, Thresholds
 from loanpipe.rules import BundleView
 from loanpipe.schemas import CheckResult, Decision
+from loanpipe.validate import GARBLED
 
 
 def route(bundle_id: str, view: BundleView, checks: list[CheckResult],
@@ -33,7 +34,11 @@ def route(bundle_id: str, view: BundleView, checks: list[CheckResult],
     # 3. Chưa chắc chắn -> người rà soát. unknown không bao giờ được coi là pass.
     unknown = [f"UNKNOWN:{c.rule_id}" for c in checks if c.status == "unknown"]
     low = [f"LOW_CONF:{d}.{n}" for d, n, f in critical if f.confidence == "low"]
-    if unknown or low:
-        return decide("REVIEW", unknown + low)
+    # Chữ rác ở BẤT KỲ field nào, kể cả field không rule nào đọc: model đã đọc hỏng giấy tờ đó, và hồ sơ
+    # auto-pass sẽ lưu dữ liệu rác. Field thiếu hoặc sai định dạng thông thường thì vẫn chỉ xét field quan trọng.
+    garbled = [f"GARBLED:{dt.value}.{n}" for dt, fs in view.docs.items() for n, f in fs.items()
+               if f.error and f.error.startswith(GARBLED)]
+    if unknown or low or garbled:
+        return decide("REVIEW", unknown + low + garbled)
 
     return decide("AUTO_PASS", [])

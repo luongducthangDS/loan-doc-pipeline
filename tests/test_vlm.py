@@ -104,4 +104,5 @@ def test_end_to_end_with_fake_api(tmp_path):
     tx = m["extraction"]["transactions"]
     assert tx["row_recall"] == tx["row_precision"] == tx["credit_row_recall"] == 1.0
     assert m["end_to_end"]["escape_rate"] == 0 and m["end_to_end"]["false_review_rate"] == 0
+    assert m["extraction"]["auto_pass_data"]["bundles_with_wrong_field"] == 0
     assert m["ops"]["docs_extract_failed"] == 0

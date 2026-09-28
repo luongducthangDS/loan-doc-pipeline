@@ -1,3 +1,4 @@
+import json
 from datetime import date
 
 import pytest
@@ -5,7 +6,7 @@ import pytest
 from loanpipe.normalize import (
     names_match, normalize_name, parse_account, parse_cccd, parse_date, parse_money, parse_optional_date,
 )
-from loanpipe.validate import finalize_field, parse_loai_hd, parse_transactions
+from loanpipe.validate import GARBLED, finalize_field, foreign_chars, parse_loai_hd, parse_transactions
 from loanpipe.schemas import LoaiHd
 
 
@@ -82,3 +83,33 @@ def test_confidence_signals():
     assert finalize_field("money", "1.000đ", second_raw=None, check_consistency=True).confidence == "low"
     end = finalize_field("opt_date", "Không xác định")
     assert (end.value, end.confidence) == (None, "high")                          # null có chủ đích
+
+
+def test_consistency_on_salary_only():
+    """Sao kê: 2 lượt lệch dòng ghi nợ nhưng cùng lương -> vẫn high; lệch lương -> low."""
+    from loanpipe.config import load_rules
+    from loanpipe.rules import salary_months
+    cfg = load_rules()
+
+    def same(a, b):
+        return salary_months(a, cfg) == salary_months(b, cfg)
+
+    def rows(luong, atm):
+        return json.dumps([{"ngay": "07/03/2026", "mo_ta": "CT LUONG T02", "so_tien": luong, "loai": "+"},
+                           {"ngay": "08/03/2026", "mo_ta": "RUT TIEN ATM", "so_tien": atm, "loai": "-"}])
+
+    def conf(second):
+        return finalize_field("transactions", rows("20,000,000", "500,000"), second_raw=second,
+                              check_consistency=True, same=same).confidence
+
+    assert conf(rows("20,000,000", "800,000")) == "high"   # chỉ lệch dòng ghi nợ
+    assert conf(rows("26,000,000", "500,000")) == "low"    # lệch lương
+
+
+def test_garbled_text_is_flagged():
+    for ok in ("CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM", "Phường Kim Liên, Quận Đống Đa – Hà Nội", "NGUYỄN THỊ ẶNG",
+               "Sửa chữa nhà ở"):
+        assert foreign_chars(ok) == "", ok
+    assert foreign_chars("CÐNG TY Cố PHâN THÐNG MàI BကC NAM") == "ÐÐက"   # gặp thật (dev_0025, photo)
+    f = finalize_field("text", "CÐNG TY Cố PHâN")
+    assert (f.value, f.confidence, f.error.startswith(GARBLED)) == (None, "low", True)

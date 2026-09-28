@@ -8,7 +8,7 @@ dù field thứ ba chưa chắc — thêm thông tin cũng không làm mâu thu�
 from __future__ import annotations
 
 import calendar
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, timedelta
@@ -106,13 +106,17 @@ def r3_dob(view: BundleView, cfg: RulesConfig) -> CheckResult:
                       lambda a, b: a == b, "Ngày sinh")
 
 
+def salary_txs(txs: list[GiaoDich], cfg: RulesConfig) -> list[GiaoDich]:
+    """Lương = ghi có + mô tả (bỏ dấu, viết hoa) khớp regex cấu hình."""
+    return [g for g in txs if g.loai == "ghi_co"
+            and any(p.search(strip_accents(g.mo_ta).upper()) for p in cfg.salary_patterns)]
+
+
 def salary_months(txs: list[GiaoDich], cfg: RulesConfig) -> dict[tuple[int, int], int]:
-    """Tổng lương theo tháng. Lương = ghi có + mô tả (bỏ dấu, viết hoa) khớp regex cấu hình."""
+    """Tổng lương theo tháng."""
     by_month: dict[tuple[int, int], int] = defaultdict(int)
-    for g in txs:
-        text = strip_accents(g.mo_ta).upper()
-        if g.loai == "ghi_co" and any(p.search(text) for p in cfg.salary_patterns):
-            by_month[(g.ngay.year, g.ngay.month)] += g.so_tien
+    for g in salary_txs(txs, cfg):
+        by_month[(g.ngay.year, g.ngay.month)] += g.so_tien
     return dict(by_month)
 
 
@@ -128,9 +132,18 @@ def r4_income(view: BundleView, cfg: RulesConfig) -> CheckResult:
     if missing:
         return _unknown("R4", view, refs, missing)
     declared = view.get(refs[0]).value
-    avg = salary_avg(view.get(refs[1]).value, cfg)
+    txs = view.get(refs[1]).value
+    avg = salary_avg(txs, cfg)
     ev = [_ev(view, refs[:1])[0], {"doc_type": "sao_ke", "field": "luong_tb_3_thang",
                                     "value": None if avg is None else round(avg), "known": avg is not None}]
+    # Hai khoản lương cùng tháng: thường là model đọc sai ngày (gặp thật: 06/06 đọc thành 30/05), hai lượt
+    # đọc cùng sai nên confidence vẫn high. TB chia theo số tháng có lương -> lương TB bị đội lên ~50% và
+    # một bộ khai khống (E4) có thể lọt. Không tự đoán -> unknown.
+    # ponytail: cũng đẩy sang REVIEW các sao kê thật trả lương 2 lần/tháng; nới khi có dữ liệu thật.
+    counts = Counter((g.ngay.year, g.ngay.month) for g in salary_txs(txs, cfg))
+    if dup := sorted(f"{m:02d}/{y}" for (y, m), c in counts.items() if c > 1):
+        return CheckResult(rule_id="R4", status="unknown", evidence=ev,
+                           message=f"Tháng có từ 2 khoản lương ({', '.join(dup)}): có thể đọc sai ngày")
     if avg is None:
         return CheckResult(rule_id="R4", status="unknown", evidence=ev,
                            message="Không tìm thấy giao dịch lương trên sao kê")

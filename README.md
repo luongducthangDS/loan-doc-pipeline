@@ -14,7 +14,7 @@ Spec đầy đủ: [`docs/spec.md`](docs/spec.md). Cách sinh dữ liệu và gi
 |---|---|---|
 | M0 | Xác minh bài toán với 2–3 cán bộ tín dụng (A1, A2) | ⏳ bộ câu hỏi sẵn: [`docs/m0_interview.md`](docs/m0_interview.md) |
 | M1 | Bộ sinh dữ liệu: 3 layout/loại (C held-out), lỗi E1–E8, near-miss, 3 mức augmentation, manifest | ✅ |
-| M2 | Spike trích xuất VLM, gate: field quan trọng ≥ 90% trên dev clean | ✅ gate đạt với Qwen2.5-VL-7B (field quan trọng 100% trên dev clean, escape 0); quy trình và benchmark: [`docs/m2_eval.md`](docs/m2_eval.md) |
+| M2 | Spike trích xuất VLM, gate: field quan trọng ≥ 90% trên dev clean | ✅ gate đạt; chọn Qwen3-VL-8B (dev clean: automation 53,8% = trần, escape 0); quy trình và benchmark: [`docs/m2_eval.md`](docs/m2_eval.md) |
 | M3 | Rule R0–R8, router, trace JSON, `make eval` | ✅ phần tất định, đã kiểm bằng oracle |
 | M4 | Review UI Streamlit, chạy test đóng băng 1 lần, demo | ⏳ |
 
@@ -29,7 +29,7 @@ Extractor `oracle` trả đúng chuỗi đã in lên ảnh, không gọi model. 
 | dev | 50 (25) | 0% | 11,3% | 50% | 0% | 100% |
 | test | 300 (150) | 0% | 2,0% | 50% | 0% | 100% |
 
-Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. Kết quả với VLM thật: automation 32% trên toàn bộ dev (trần 50%), escape 0/25; chi tiết ở [`docs/m2_eval.md`](docs/m2_eval.md).
+Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. Kết quả với VLM thật (Qwen3-VL-8B): automation 44% trên toàn bộ dev (trần 50%), escape 0/25; chi tiết ở [`docs/m2_eval.md`](docs/m2_eval.md).
 
 ## Chạy
 

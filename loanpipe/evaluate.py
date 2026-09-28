@@ -158,19 +158,27 @@ def compute_metrics(entries: list[dict], traces: dict[str, dict], thr) -> tuple[
         "by_layout": {k: acc(v) for (g, k), v in sorted(by.items()) if g == "layout"},
         "transactions": transaction_rows([r for r in frows if r["field"] == "giao_dich"]),
     }
+    # Dữ liệu của bộ AUTO_PASS vào hệ thống không qua người: field sai ở đây là sai lọt, kể cả field không
+    # rule nào đọc (vd ngày cấp CCCD). Hai model có thể cùng automation mà khác hẳn ở chỉ số này.
+    auto_ids = {b for b, t in traces.items() if t["decision"]["route"] == "AUTO_PASS"}
+    ap = [r for r in frows if r["bundle_id"] in auto_ids]
+    extraction["auto_pass_data"] = {**acc(ap), "bundles": len(auto_ids),
+                                    "bundles_with_wrong_field": len({r["bundle_id"] for r in ap if not r["ok"]})}
 
     # Rule: recall theo mã lỗi, precision trên bộ sạch (tách near-miss)
     recall: dict[str, dict] = {}
     for code in ErrorCode:
         rule = ERROR_RULE[code]
         hits = [e for e in entries if any(x["code"] == code.value for x in e["injected_errors"])]
-        caught = [e for e in hits if _status(traces[e["bundle_id"]], rule) == "fail"]
-        recall[code.value] = {"rule": rule, "n": len(hits), "caught": len(caught),
-                              "recall": _rate(len(caught), len(hits))}
+        # fail = rule bắt được; unknown = rule không chắc nên đẩy sang người (an toàn, nhưng không phải "bắt
+        # được"); pass = sót thật. Gộp unknown vào "sót" làm recall trông tệ hơn thực tế an toàn.
+        st = Counter(_status(traces[e["bundle_id"]], rule) for e in hits)
+        recall[code.value] = {"rule": rule, "n": len(hits), "caught": st["fail"], "unknown": st["unknown"],
+                              "missed": st["pass"], "recall": _rate(st["fail"], len(hits))}
         for e in hits:
-            if e not in caught:
-                errors_csv.append({"bundle_id": e["bundle_id"], "kind": "rule_miss", "detail": f"{code.value}->{rule}",
-                                   "expected": "fail", "actual": _status(traces[e["bundle_id"]], rule)})
+            if (s := _status(traces[e["bundle_id"]], rule)) != "fail":
+                errors_csv.append({"bundle_id": e["bundle_id"], "kind": "rule_miss" if s == "pass" else "rule_unknown",
+                                   "detail": f"{code.value}->{rule}", "expected": "fail", "actual": s})
     clean = [e for e in entries if not e["injected_errors"]]
 
     def flagged(e):
@@ -251,8 +259,10 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
         d_auto = (e2e["automation_rate"] or 0) - (pe["automation_rate"] or 0)
         verdict = "**LOẠI: escape rate tăng**" if d_esc > 0 else "không tăng escape rate"
         L += ["", f"So với run trước `{prev['_run_id']}`: escape {d_esc:+.1%}, automation {d_auto:+.1%} → {verdict}"]
-    L += ["", "## Rule", "", "| Mã lỗi | Rule | n | Bắt được | Recall |", "|---|---|---|---|---|"]
-    L += [f"| {c} | {r['rule']} | {r['n']} | {r['caught']} | {_pct(r['recall'])} |"
+    L += ["", "## Rule", "",
+          "| Mã lỗi | Rule | n | Bắt được (fail) | Không chắc → REVIEW (unknown) | **Sót (pass)** | Recall |",
+          "|---|---|---|---|---|---|---|"]
+    L += [f"| {c} | {r['rule']} | {r['n']} | {r['caught']} | {r['unknown']} | {r['missed']} | {_pct(r['recall'])} |"
           for c, r in rl["recall_by_error"].items()]
     L += ["", f"Bộ sạch không bị gắn cờ: {_pct(rl['clean_not_flagged'])}", "",
           "| Near-miss | n | Không bị gắn cờ |", "|---|---|---|"]
@@ -261,6 +271,9 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
           f"- Field accuracy: {_pct(ext['field_accuracy']['acc'])} (n={ext['field_accuracy']['n']})",
           f"- Field quan trọng: {_pct(ext['critical_field_accuracy']['acc'])}",
           f"- Tỉ lệ lỗi định dạng/schema: {_pct(ext['schema_error_rate'])}"]
+    apd = ext["auto_pass_data"]
+    L += [f"- **Dữ liệu bộ AUTO_PASS** (vào hệ thống không qua người): field đúng {_pct(apd['acc'])} "
+          f"(n={apd['n']}); {apd['bundles']} bộ auto-pass, trong đó {apd['bundles_with_wrong_field']} bộ có field sai"]
     tx = ext["transactions"]
     L += [f"- Sao kê theo dòng: parse được {tx['parsed']}/{tx['statements']} sao kê; dòng đúng (recall) "
           f"{_pct(tx['row_recall'])} (n={tx['n_rows']}), precision {_pct(tx['row_precision'])}; "

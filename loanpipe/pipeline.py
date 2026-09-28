@@ -16,7 +16,7 @@ from PIL import Image
 from loanpipe.config import RulesConfig, Thresholds
 from loanpipe.extract import Extractor
 from loanpipe.router import route
-from loanpipe.rules import BundleView, run_rules
+from loanpipe.rules import BundleView, run_rules, salary_months
 from loanpipe.schemas import DocType, Extraction, field_kinds
 from loanpipe.validate import finalize_field
 
@@ -63,6 +63,10 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
     model_outputs: dict[str, str | None] = {}
     extract_errors: dict[str, list[str]] = {}
     cost = 0.0
+
+    def same_salary(a, b):  # R4 chỉ đọc lương từng tháng; lệch dòng ghi nợ giữa 2 lượt không đổi quyết định nào
+        return salary_months(a, rules_cfg) == salary_months(b, rules_cfg)
+
     for d in inp.docs:
         if d.doc_type in unreadable:
             continue
@@ -74,7 +78,8 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
             raw, page = r1.fields.get(name, (None, None))
             check = r2 is not None and thr.is_critical(d.doc_type.value, name)
             second = r2.fields.get(name, (None, None))[0] if check else None
-            fields[name] = finalize_field(kind, raw, page, second, check_consistency=check)
+            fields[name] = finalize_field(kind, raw, page, second, check_consistency=check,
+                                          **({"same": same_salary} if kind == "transactions" else {}))
         runs = [r for r in (r1, r2) if r is not None]
         cost += sum(r.cost_usd for r in runs)
         model_outputs[d.doc_id] = r1.model_output
@@ -96,7 +101,9 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
     return {
         "bundle_id": inp.bundle_id,
         "steps": steps,
-        "latency_ms": sum(steps.values()) + sum(e.latency_ms for e in extractions),
+        # extract_validate_ms đã chứa thời gian gọi model khi chạy thật -> không cộng thêm lần nữa. Dùng latency
+        # model đã ghi (có trong cache) thay cho wall time của bước đó, để run đọc cache vẫn báo đúng latency.
+        "latency_ms": steps["ingest_ms"] + steps["rules_route_ms"] + sum(e.latency_ms for e in extractions),
         "n_calls": sum(e.n_calls for e in extractions),
         "cost_usd": cost,
         "unreadable": [d.value for d in unreadable],

@@ -79,6 +79,17 @@ def test_income_within_tolerance(docs, cfg):
     assert status(BundleView(docs), cfg, "R4") == "pass"
 
 
+def test_two_salaries_in_one_month_is_unknown(docs, cfg):
+    """Gặp thật (dev_0037): model đọc ngày lương 07/04 thành 30/03, hai lượt cùng sai nên confidence high.
+    Không chặn thì lương TB = 60tr/2 tháng = 30tr và một bộ khai khống 30tr (thật: 20tr) sẽ pass."""
+    txs = [g if g.ngay != date(2026, 4, 7) else g.model_copy(update={"ngay": date(2026, 3, 30)})
+           for g in docs[D.SAO_KE]["giao_dich"].value]
+    docs[D.SAO_KE]["giao_dich"] = F(txs)
+    docs[D.DON_VAY]["thu_nhap_thang"] = F(30_000_000)
+    assert salary_avg(txs, cfg) == 30_000_000  # lương TB bị đội lên đúng như lo
+    assert status(BundleView(docs), cfg, "R4") == "unknown"
+
+
 def test_salary_regex_ignores_person_named_luong(docs, cfg):
     txs = docs[D.SAO_KE]["giao_dich"].value + [
         GiaoDich(ngay=date(2026, 3, 20), mo_ta="NHAN CK TU LUONG VAN TUNG", so_tien=30_000_000, loai="ghi_co"),
