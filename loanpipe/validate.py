@@ -27,10 +27,23 @@ def parse_loai_hd(s: str) -> LoaiHd:
 
 
 def parse_transactions(s: str) -> list[GiaoDich]:
-    """raw = JSON list các dòng {ngay, mo_ta, so_tien, loai} dạng chuỗi như trên ảnh."""
+    """raw = JSON list các dòng {ngay, mo_ta, so_tien, loai} dạng chuỗi như trên ảnh.
+    Sao kê tách hai cột: dòng {ngay, mo_ta, ghi_co, ghi_no}, code suy ra loai từ cột có số."""
     rows = json.loads(s)
     out = []
     for r in rows:
+        if not isinstance(r, dict):
+            raise ValueError(f"dòng giao dịch không phải object: {r!r}")
+        if "ghi_co" in r or "ghi_no" in r:
+            cols = [(k, r.get(k)) for k in ("ghi_co", "ghi_no") if str(r.get(k) or "").strip()]
+            if len(cols) != 1:
+                raise ValueError(f"dòng cần đúng 1 cột có số tiền: {r}")
+            r = {**r, "loai": cols[0][0], "so_tien": cols[0][1]}
+        amt = str(r["so_tien"]).strip()
+        if amt[:1] in "+-" and amt[:1]:
+            # Dấu là ký tự chép nguyên văn từ ảnh, còn cột/loai là model tự diễn giải -> dấu quyết định.
+            # Sao kê hai cột thật không in dấu, nên quy tắc này chỉ tác động lên kiểu "+1.000/-1.000".
+            r = {**r, "loai": amt[0], "so_tien": amt[1:]}
         loai = n.strip_accents(str(r["loai"])).lower().replace(" ", "_")
         loai = "ghi_co" if loai in ("ghi_co", "co", "c", "cr", "credit", "+") else "ghi_no" if loai in (
             "ghi_no", "no", "d", "dr", "debit", "-") else loai

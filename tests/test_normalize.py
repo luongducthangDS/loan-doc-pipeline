@@ -57,6 +57,19 @@ def test_loai_hd_and_transactions():
            ' {"ngay": "08-03-2026", "mo_ta": "ATM", "so_tien": "2.000", "loai": "D"}]'
     txs = parse_transactions(rows)
     assert [(t.so_tien, t.loai, t.mo_ta) for t in txs] == [(1000, "ghi_co", "CT LUONG"), (2000, "ghi_no", "ATM")]
+    two_col = '[{"ngay": "07/03/2026", "mo_ta": "LUONG", "ghi_co": "1,000", "ghi_no": null},' \
+              ' {"ngay": "08/03/2026", "mo_ta": "ATM", "ghi_co": "", "ghi_no": "2,000"}]'
+    assert [(t.so_tien, t.loai) for t in parse_transactions(two_col)] == [(1000, "ghi_co"), (2000, "ghi_no")]
+    signed = '[{"ngay": "07/03/2026", "mo_ta": "X", "so_tien": "-2,892,000", "loai": "-"},' \
+             ' {"ngay": "07/03/2026", "mo_ta": "Y", "so_tien": "+1.000", "loai": null}]'
+    assert [(t.so_tien, t.loai) for t in parse_transactions(signed)] == [(2892000, "ghi_no"), (1000, "ghi_co")]
+    with pytest.raises(ValueError):  # model trả dòng dạng chuỗi (gặp trên ảnh scan)
+        parse_transactions('["07/03/2026 LUONG ghi_co 1,000"]')
+    # dấu in trên ảnh thắng cột model chọn (gặp thật: sao kê 1 cột có dấu, model chép vào ghi_co)
+    wrong_col = '[{"ngay": "18/03/2026", "mo_ta": "VE MAY BAY", "ghi_co": "-595,000", "ghi_no": null}]'
+    assert [(t.so_tien, t.loai) for t in parse_transactions(wrong_col)] == [(595000, "ghi_no")]
+    with pytest.raises(ValueError):  # cả hai cột cùng có số -> không đoán, để REVIEW
+        parse_transactions('[{"ngay": "07/03/2026", "mo_ta": "X", "ghi_co": "1,000", "ghi_no": "1,000"}]')
 
 
 def test_confidence_signals():

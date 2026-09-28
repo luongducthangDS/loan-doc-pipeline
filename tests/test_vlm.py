@@ -34,6 +34,8 @@ def test_parse_output():
     assert out["ngay_sinh"] == (None, None) and out["que_quan"] == (None, None) and "extra" not in out
     rows = parse_output('{"giao_dich": {"raw": [{"ngay": "01/01/2026"}], "page": 1}}', DocType.SAO_KE)
     assert json.loads(rows["giao_dich"][0]) == [{"ngay": "01/01/2026"}]
+    wrapped = parse_output('{"giao_dich": [{"raw": {"ngay": "01/01/2026"}, "page": 1}]}', DocType.SAO_KE)
+    assert json.loads(wrapped["giao_dich"][0]) == [{"ngay": "01/01/2026"}]
     with pytest.raises(ValueError):
         parse_output("xin lỗi, tôi không đọc được", DocType.CCCD)
 
@@ -78,24 +80,28 @@ def test_end_to_end_with_fake_api(tmp_path):
     i = 0
     for e in manifest:
         for d in e["docs"]:
-            for f in d["files"]:
+            for page, f in enumerate(d["files"], 1):
                 p = tmp_path / f
                 p.parent.mkdir(parents=True, exist_ok=True)
                 Image.new("RGB", (20 + i % 200, 20 + i // 200)).save(p)  # ảnh khác nhau để nhận diện
                 i += 1
-            first = tmp_path / d["files"][0]
-            payload = {k: {"raw": json.loads(v["raw"]) if k == "giao_dich" else v["raw"], "page": v["page"]}
-                       for k, v in d["fields_raw"].items()}
-            for variant in (0, 1):
-                by_image[encode_image(first, variant)] = payload
+                # mỗi ảnh chỉ trả field in trên trang đó, như API thật khi gọi từng ảnh
+                payload = {k: {"raw": json.loads(v["raw"]) if k == "giao_dich" else v["raw"], "page": 1}
+                           for k, v in d["fields_raw"].items() if (v["page"] or 1) == page}
+                for variant in (0, 1):
+                    by_image[encode_image(p, variant)] = payload
 
     def post(url, key, body):
-        return reply(by_image[body["messages"][1]["content"][1]["image_url"]["url"]])
+        content = body["messages"][1]["content"]
+        assert len(content) == 2, "mỗi request đúng 1 ảnh (FPT từ chối nhiều ảnh)"
+        return reply(by_image[content[1]["image_url"]["url"]])
 
     x = VLMExtractor("u", "k", "fake-vlm", cache_dir=tmp_path / "cache", post=post)
     cfg, thr = load_rules(), load_thresholds()
     traces = {e["bundle_id"]: run_bundle(bundle_input_from_manifest(e, tmp_path), x, cfg, thr) for e in manifest}
     m, _ = compute_metrics(manifest, traces, thr)
     assert m["extraction"]["field_accuracy"]["acc"] == 1.0
+    tx = m["extraction"]["transactions"]
+    assert tx["row_recall"] == tx["row_precision"] == tx["credit_row_recall"] == 1.0
     assert m["end_to_end"]["escape_rate"] == 0 and m["end_to_end"]["false_review_rate"] == 0
     assert m["ops"]["docs_extract_failed"] == 0

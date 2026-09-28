@@ -11,11 +11,13 @@ from __future__ import annotations
 
 import argparse
 import csv
+import functools
 import json
 import math
 import statistics
 import subprocess
-from collections import defaultdict
+import sys
+from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
@@ -27,7 +29,8 @@ from loanpipe import normalize as n
 from loanpipe.config import load_rules, load_thresholds
 from loanpipe.extract import get_extractor
 from loanpipe.pipeline import bundle_input_from_manifest, run_bundle
-from loanpipe.schemas import ERROR_RULE, DocType, ErrorCode, field_kinds
+from loanpipe.rules import salary_months
+from loanpipe.schemas import ERROR_RULE, DocType, ErrorCode, GiaoDich, field_kinds
 
 ROUTES = ["AUTO_PASS", "REVIEW", "REQUEST_MORE"]
 _json = TypeAdapter(Any)
@@ -74,6 +77,25 @@ def gt_value(kind: str, v: Any) -> Any:
     return v
 
 
+_rules = functools.cache(load_rules)
+
+
+def same(kind: str, pred: Any, gt: Any) -> bool:
+    """Chấm theo cái pipeline dùng, không theo từng ký tự.
+    - text: không phân biệt hoa/thường ("Nữ" = "NỮ"). Tên (name) vẫn giữ dấu vì R1 bắt lỗi 1 dấu.
+    - transactions: đúng khi lương theo tháng (thứ duy nhất R4 đọc) khớp; lệch dòng ghi nợ không đổi
+      quyết định nào. Độ chính xác từng dòng báo riêng ở transaction_rows."""
+    if pred is None or gt is None:
+        return pred == gt
+    if kind == "text":
+        return pred.casefold() == gt.casefold()
+    if kind == "transactions":
+        def months(txs):
+            return salary_months([GiaoDich(**g) for g in txs], _rules())
+        return months(pred) == months(gt)
+    return pred == gt
+
+
 def field_rows(entry: dict, trace: dict) -> list[dict]:
     pred = {e["doc_id"]: e["fields"] for e in trace["extractions"]}
     rows = []
@@ -85,12 +107,29 @@ def field_rows(entry: dict, trace: dict) -> list[dict]:
             pv = p["value"] if p else None
             rows.append({"bundle_id": entry["bundle_id"], "doc_type": dt.value, "field": name,
                          "layout": entry["layout_ids"][dt.value], "augment": entry["augment"],
-                         "ok": pv == gt, "schema_error": bool(p and p["error"]),
+                         "ok": same(kind, pv, gt), "schema_error": bool(p and p["error"]),
                          "pred": pv, "gt": gt, "raw": p["raw"] if p else None})
     return rows
 
 
 # --- Metric ---------------------------------------------------------------------------
+
+def transaction_rows(rows: list[dict]) -> dict:
+    """Chấm sao kê theo DÒNG. Field giao_dich chỉ đúng khi cả ~25 dòng đúng, che mất model đọc được bao nhiêu.
+    Dòng khớp khi đủ (ngay, mo_ta, so_tien, loai). Sao kê không parse được -> mọi dòng tính là trượt."""
+    def key(g):
+        return g["ngay"], g["mo_ta"], g["so_tien"], g["loai"]
+    n_gt = n_pred = hit = n_co = hit_co = 0
+    for r in rows:
+        gt, pred = Counter(map(key, r["gt"] or [])), Counter(map(key, r["pred"] or []))
+        ok = gt & pred
+        n_gt, n_pred, hit = n_gt + gt.total(), n_pred + pred.total(), hit + ok.total()
+        n_co += sum(v for k, v in gt.items() if k[3] == "ghi_co")
+        hit_co += sum(v for k, v in ok.items() if k[3] == "ghi_co")
+    return {"statements": len(rows), "parsed": sum(r["pred"] is not None for r in rows),
+            "row_recall": _rate(hit, n_gt), "row_precision": _rate(hit, n_pred), "n_rows": n_gt,
+            "credit_row_recall": _rate(hit_co, n_co), "n_credit_rows": n_co}
+
 
 def compute_metrics(entries: list[dict], traces: dict[str, dict], thr) -> tuple[dict, list[dict]]:
     errors_csv: list[dict] = []
@@ -117,6 +156,7 @@ def compute_metrics(entries: list[dict], traces: dict[str, dict], thr) -> tuple[
         "by_field": {k: acc(v) for (g, k), v in sorted(by.items()) if g == "field"},
         "by_augment": {k: acc(v) for (g, k), v in sorted(by.items()) if g == "augment"},
         "by_layout": {k: acc(v) for (g, k), v in sorted(by.items()) if g == "layout"},
+        "transactions": transaction_rows([r for r in frows if r["field"] == "giao_dich"]),
     }
 
     # Rule: recall theo mã lỗi, precision trên bộ sạch (tách near-miss)
@@ -220,7 +260,11 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
     L += ["", "## Trích xuất", "",
           f"- Field accuracy: {_pct(ext['field_accuracy']['acc'])} (n={ext['field_accuracy']['n']})",
           f"- Field quan trọng: {_pct(ext['critical_field_accuracy']['acc'])}",
-          f"- Tỉ lệ lỗi định dạng/schema: {_pct(ext['schema_error_rate'])}", "",
+          f"- Tỉ lệ lỗi định dạng/schema: {_pct(ext['schema_error_rate'])}"]
+    tx = ext["transactions"]
+    L += [f"- Sao kê theo dòng: parse được {tx['parsed']}/{tx['statements']} sao kê; dòng đúng (recall) "
+          f"{_pct(tx['row_recall'])} (n={tx['n_rows']}), precision {_pct(tx['row_precision'])}; "
+          f"dòng Ghi có (R4 dùng tính lương) {_pct(tx['credit_row_recall'])} (n={tx['n_credit_rows']})", "",
           "| Nhóm | n | Accuracy |", "|---|---|---|"]
     for grp in ("by_augment", "by_layout", "by_field"):
         L += [f"| {grp[3:]}: {k} | {v['n']} | {_pct(v['acc'])} |" for k, v in ext[grp].items()]
@@ -243,7 +287,14 @@ def git_commit() -> str:
         return "unknown"
 
 
+RUNS_FIELDS = ["run_id", "split", "filter", "n_bundles", "model", "prompt_version", "rules_version",
+               "thresholds_version", "git_commit", "escape_rate", "escape_upper95", "automation_rate",
+               "false_review_rate", "field_accuracy", "critical_field_accuracy", "txn_row_recall",
+               "txn_credit_row_recall", "latency_p95_ms", "cost_per_bundle_usd"]
+
+
 def main() -> None:
+    sys.stdout.reconfigure(encoding="utf-8")  # console Windows mặc định cp1252, không in được tiếng Việt
     ap = argparse.ArgumentParser()
     ap.add_argument("--split", default="dev")
     ap.add_argument("--extractor", default="oracle")
@@ -262,7 +313,7 @@ def main() -> None:
     kw = {"manifest": entries} if args.extractor == "oracle" else {}
     extractor = get_extractor(args.extractor, **kw)
 
-    run_id = f"{datetime.now():%Y%m%d-%H%M%S}_{args.split}_{extractor.name}"
+    run_id = f"{datetime.now():%Y%m%d-%H%M%S}_{args.split}_{extractor.name.replace('/', '_')}"  # HF id có "/"
     out = args.out / run_id
     (out / "traces").mkdir(parents=True)
     def one(e: dict) -> dict:
@@ -280,9 +331,13 @@ def main() -> None:
             "prompt_version": extractor.prompt_version, "rules_version": rules_cfg.version,
             "thresholds_version": thr.version, "git_commit": git_commit()}
     index = args.out / "runs.csv"
+    if index.exists() and next(csv.reader(index.open(encoding="utf-8")), None) != RUNS_FIELDS:
+        index.replace(index.with_name("runs_legacy.csv"))  # header cũ lệch cột: cất đi, bắt đầu bảng mới
     prev = None
     if index.exists():
-        rows = [r for r in csv.DictReader(index.open(encoding="utf-8")) if r["split"] == args.split]
+        # chỉ so với run cùng split VÀ cùng bộ lọc: so clean với toàn bộ dev là so táo với cam
+        rows = [r for r in csv.DictReader(index.open(encoding="utf-8"))
+                if r["split"] == args.split and r["filter"] == meta["filter"]]
         if rows and (args.out / rows[-1]["run_id"] / "metrics.json").exists():
             prev = json.loads((args.out / rows[-1]["run_id"] / "metrics.json").read_text("utf-8"))
             prev["_run_id"] = rows[-1]["run_id"]
@@ -293,13 +348,17 @@ def main() -> None:
         w = csv.DictWriter(f, fieldnames=["bundle_id", "kind", "detail", "expected", "actual"])
         w.writeheader()
         w.writerows(errs)
-    e2e = metrics["end_to_end"]
+    e2e, ext, ops = metrics["end_to_end"], metrics["extraction"], metrics["ops"]
     row = {**meta, "escape_rate": e2e["escape_rate"], "escape_upper95": round(e2e["escape_rate_upper95"], 4),
            "automation_rate": e2e["automation_rate"], "false_review_rate": e2e["false_review_rate"],
-           "field_accuracy": metrics["extraction"]["field_accuracy"]["acc"]}
+           "field_accuracy": ext["field_accuracy"]["acc"],
+           "critical_field_accuracy": ext["critical_field_accuracy"]["acc"],
+           "txn_row_recall": ext["transactions"]["row_recall"],
+           "txn_credit_row_recall": ext["transactions"]["credit_row_recall"],
+           "latency_p95_ms": ops["latency_p95_ms"], "cost_per_bundle_usd": ops["cost_per_bundle_usd"]}
     new = not index.exists()
     with index.open("a", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(row))
+        w = csv.DictWriter(f, fieldnames=RUNS_FIELDS)
         if new:
             w.writeheader()
         w.writerow(row)

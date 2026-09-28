@@ -1,6 +1,7 @@
 """VLM extractor qua API tương thích OpenAI (FPT AI Marketplace, vLLM, ...). M2.
 
-- Mỗi lần gọi chỉ gửi MỘT giấy tờ (có thể nhiều trang).
+- Mỗi lần gọi chỉ gửi MỘT ảnh của MỘT giấy tờ; giấy tờ nhiều ảnh (CCCD 2 mặt, sao kê nhiều trang) gọi
+  từng ảnh rồi gộp.
 - Model chỉ CHÉP chuỗi in trên ảnh; chuẩn hóa và confidence do code làm (loanpipe.validate).
 - Lỗi mạng / output không phải JSON: thử lại 1 lần, sau đó trả rỗng -> field low -> REVIEW.
 - Cache theo (model, prompt, ảnh, variant): đổi ngưỡng rồi chạy lại eval không tốn thêm tiền API.
@@ -27,7 +28,7 @@ from PIL import Image, ImageOps
 from loanpipe.extract import RawExtraction
 from loanpipe.schemas import DocType, field_kinds
 
-PROMPT_VERSION = "v1"
+PROMPT_VERSION = "v4"  # v2: mỗi ảnh một lần gọi; v3: sao kê hai cột ghi_co/ghi_no; v4: không chép nhãn
 MAX_SIDE = 1600  # ponytail: cố định; ví dụ của FPT resize 1280, nhưng chữ sao kê A4 nhỏ -> đo trên dev rồi chỉnh
 
 DOC_LABEL = {
@@ -39,7 +40,7 @@ DOC_LABEL = {
 FIELD_HINT = {
     "so_cccd": "số CCCD / số định danh cá nhân", "ho_ten": "họ và tên", "ngay_sinh": "ngày sinh",
     "gioi_tinh": "giới tính", "que_quan": "quê quán", "noi_thuong_tru": "nơi thường trú",
-    "ngay_cap": "ngày cấp (mặt sau)", "ngay_het_han": "có giá trị đến / ngày hết hạn",
+    "ngay_cap": "ngày cấp (mặt sau, dòng 'Ngày, tháng, năm / Date, month, year')", "ngay_het_han": "có giá trị đến / ngày hết hạn",
     "so_dien_thoai": "số điện thoại", "dia_chi": "địa chỉ", "ten_cong_ty": "tên công ty / nơi làm việc",
     "thu_nhap_thang": "thu nhập mỗi tháng", "so_tien_vay": "số tiền đề nghị vay", "thoi_han_thang": "thời hạn vay",
     "muc_dich": "mục đích vay", "so_tk_nhan_luong": "số tài khoản nhận lương", "ngay_ky": "ngày ký / ngày làm đơn",
@@ -47,21 +48,26 @@ FIELD_HINT = {
     "ngay_bat_dau": "ngày bắt đầu", "ngay_ket_thuc": "ngày kết thúc (ghi đúng chữ nếu là 'Không xác định')",
     "muc_luong": "mức lương", "chu_tk": "tên chủ tài khoản", "so_tk": "số tài khoản", "ky_tu": "sao kê từ ngày",
     "ky_den": "sao kê đến ngày",
-    "giao_dich": 'MỌI dòng giao dịch, mỗi dòng {"ngay", "mo_ta", "so_tien", "loai"}; '
-                 'loai chép đúng ký hiệu trên ảnh (Ghi có/Ghi nợ, +/-, C/D)',
+    "giao_dich": 'MỌI dòng giao dịch. Nếu bảng có HAI cột số tiền riêng "Ghi có" và "Ghi nợ": mỗi dòng '
+                 '{"ngay", "mo_ta", "ghi_co", "ghi_no"}, chép số ở đúng cột của nó, cột trống thì null. '
+                 'Nếu chỉ có MỘT cột số tiền: mỗi dòng {"ngay", "mo_ta", "so_tien", "loai"}, '
+                 'loai chép đúng ký hiệu trên ảnh (+/-, C/D)',
 }
 SYSTEM = (
     "Bạn là công cụ CHÉP dữ liệu từ ảnh giấy tờ tiếng Việt. Quy tắc:\n"
     "1. Chép NGUYÊN VĂN chuỗi in trên ảnh: giữ dấu, giữ định dạng số và ngày, không sửa chính tả, "
-    "không chuẩn hóa, không suy luận, không tính toán.\n"
+    "không chuẩn hóa, không suy luận, không tính toán. Chỉ chép phần giá trị, không chép nhãn "
+    "đứng trước nó (như 'Ông/Bà:', 'Họ tên:').\n"
     "2. Không thấy field trên ảnh thì trả null. Tuyệt đối không đoán.\n"
     "3. Chỉ trả về MỘT object JSON, không giải thích."
 )
 
 
-def build_prompt(doc_type: DocType) -> str:
+def build_prompt(doc_type: DocType, page: int = 1, n_pages: int = 1) -> str:
     lines = [f'- "{k}": {FIELD_HINT[k]}' for k in field_kinds(doc_type)]
-    return (f"Giấy tờ: {DOC_LABEL[doc_type]}.\nTrả về JSON với các key sau:\n" + "\n".join(lines) +
+    part = (f"\nĐây là ảnh {page}/{n_pages} của giấy tờ; field không có trên ảnh này thì trả null."
+            if n_pages > 1 else "")
+    return (f"Giấy tờ: {DOC_LABEL[doc_type]}.{part}\nTrả về JSON với các key sau:\n" + "\n".join(lines) +
             '\nMỗi value có dạng {"raw": <chuỗi nguyên văn>, "page": <số thứ tự ảnh, từ 1>} hoặc null. '
             'Riêng "giao_dich": {"raw": [danh sách dòng], "page": 1}.')
 
@@ -76,6 +82,8 @@ def parse_output(text: str, doc_type: DocType) -> dict[str, tuple[str | None, in
     for name in field_kinds(doc_type):
         v = obj.get(name)
         raw, page = (v.get("raw"), v.get("page")) if isinstance(v, dict) else (v, None)
+        if isinstance(raw, list):  # Qwen hay bọc từng dòng giao dịch: [{"raw": {...}, "page": 1}, ...]
+            raw = [r["raw"] if isinstance(r, dict) and "raw" in r else r for r in raw]
         if isinstance(raw, (list, dict)):
             raw = json.dumps(raw, ensure_ascii=False)
         elif raw is not None:
@@ -113,20 +121,43 @@ class VLMExtractor:
 
     def extract(self, bundle_id: str, doc_id: str, doc_type: DocType, files: list[Path],
                 variant: int = 0) -> RawExtraction:
-        prompt = build_prompt(doc_type)
+        """Mỗi ảnh một lần gọi rồi gộp: FPT trả 400 "Invalid image URL" nếu request có >1 ảnh.
+        Field lấy từ ảnh đầu tiên có giá trị (page = số thứ tự ảnh, không tin page model tự khai);
+        riêng giao_dich nối danh sách qua các trang sao kê."""
+        parts = [self._extract_one(doc_type, f, i, len(files), variant) for i, f in enumerate(files, 1)]
+        fields = {k: (None, None) for k in field_kinds(doc_type)}
+        for page, r in enumerate(parts, 1):
+            for k, (raw, _) in r.fields.items():
+                if raw is None:
+                    continue
+                if fields[k][0] is None:
+                    fields[k] = (raw, page)
+                elif k == "giao_dich":
+                    try:
+                        rows = json.loads(fields[k][0]) + json.loads(raw)
+                        fields[k] = (json.dumps(rows, ensure_ascii=False), fields[k][1])
+                    except (ValueError, TypeError):
+                        pass  # trang nào không phải list JSON thì giữ phần đã có; validate sẽ bắt lỗi
+        outputs = [r.model_output for r in parts if r.model_output]
+        return RawExtraction(fields=fields, latency_ms=sum(r.latency_ms for r in parts),
+                             n_calls=sum(r.n_calls for r in parts), cost_usd=sum(r.cost_usd for r in parts),
+                             model_output="\n---\n".join(outputs) or None,
+                             errors=[e for r in parts for e in r.errors])
+
+    def _extract_one(self, doc_type: DocType, f: Path, page: int, n_pages: int, variant: int) -> RawExtraction:
+        prompt = build_prompt(doc_type, page, n_pages)
         h = hashlib.sha256(f"{self.name}|{SYSTEM}|{prompt}|{variant}".encode())
-        for f in files:
-            h.update(Path(f).read_bytes())
+        h.update(Path(f).read_bytes())
         cache = self.cache_dir / f"{h.hexdigest()[:32]}.json"
         if cache.exists():
             r = RawExtraction(**json.loads(cache.read_text("utf-8")))
-            r.fields = {k: tuple(v) for k, v in r.fields.items()}
+            r.fields = parse_output(r.model_output, doc_type)  # parse lại: sửa parser không tốn thêm tiền API
             return r
 
         payload = {"model": self.name, "temperature": 0, "max_tokens": 4096, "messages": [
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": [{"type": "text", "text": prompt}] +
-             [{"type": "image_url", "image_url": {"url": encode_image(f, variant)}} for f in files]}]}
+             [{"type": "image_url", "image_url": {"url": encode_image(f, variant)}}]}]}
         errors, text, cost, t0, calls = [], None, 0.0, time.perf_counter(), 0
         fields = {k: (None, None) for k in field_kinds(doc_type)}
         for _ in range(2):  # thử lại đúng 1 lần

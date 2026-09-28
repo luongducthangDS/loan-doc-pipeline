@@ -166,6 +166,15 @@ Router đưa mỗi bộ hồ sơ vào 1 trong 3 nhánh. Bản sửa của review
 | Review UI | Streamlit | Nhanh nhất cho một người làm | Web app có phân quyền |
 | Thực thi | Đồng bộ trong request | Đủ cho demo | Background worker + queue |
 
+**Vì sao ứng viên là Qwen2.5-VL-7B-Instruct.** Đây là giả định để bắt đầu, chưa phải kết luận: chưa có số đo nào so với model khác.
+
+- **Open-weight.** Hồ sơ vay thật chứa CCCD, sao kê; ngân hàng thường không được gửi ra API nước ngoài. Model open-weight cho phép chuyển sang self-host on-prem mà giữ nguyên model và prompt. GPT-4o, Gemini, Claude không có đường này.
+- **Cỡ 7B.** Mỗi bộ khoảng 8 lần gọi (4 giấy tờ × 2 lượt tự nhất quán), nên giá mỗi lần gọi quyết định chi phí. Khi self-host, 7B chạy được trên một GPU.
+- **Có sẵn trên FPT AI Marketplace.** Gọi qua API tương thích OpenAI, không cần GPU cho MVP, hợp ràng buộc chi phí thấp.
+- **Dòng Qwen-VL mạnh về đọc tài liệu và đa ngôn ngữ,** nhưng việc đọc đúng tiếng Việt có dấu trên ảnh chụp vẫn là giả định A3, kiểm ở M2.
+
+Gate M2 so tối thiểu 3 model trên cùng dev set: Qwen2.5-VL-7B, Qwen3-VL-8B (dự phòng nếu 7B không đạt) và một model đóng (GPT-4o hoặc Gemini) làm mốc trên. Harness chỉ cần đổi `VLM_MODEL`. Nếu model đóng vượt xa hai model open-weight, đó là chi phí của yêu cầu data residency và cần ghi rõ, không che đi.
+
 **Data contract giữa các bước.** Mỗi bước chỉ nhận và trả đúng các object dưới đây, nên có thể test từng bước độc lập.
 
 ```
@@ -346,7 +355,7 @@ Giả định yếu nhất là **A1: bài toán có thật và đáng giải**. 
 
 **Câu hỏi mở**
 
-- Chốt VLM: Qwen2.5-VL-7B qua API hay chạy local? Quyết định ở gate M2, dựa trên accuracy và chi phí.
+- Chốt VLM: Qwen2.5-VL-7B, Qwen3-VL-8B hay model khác; qua API hay chạy local? Quyết định ở gate M2, dựa trên accuracy và chi phí so với mốc model đóng (xem "Vì sao ứng viên là Qwen2.5-VL-7B-Instruct").
 - Chi phí API cho 300 bộ test, khoảng 1.500–2.500 lần gọi, là bao nhiêu? Chưa có số.
 - Có làm baseline OCR B1 hay không? Phụ thuộc thời gian còn lại sau M3.
 

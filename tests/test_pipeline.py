@@ -6,7 +6,7 @@ import pytest
 
 from datagen.build import build_split
 from loanpipe.config import load_rules, load_thresholds
-from loanpipe.evaluate import compute_metrics, upper_bound_95
+from loanpipe.evaluate import compute_metrics, same, upper_bound_95
 from loanpipe.extract import RawExtraction
 from loanpipe.extract.oracle import OracleExtractor
 from loanpipe.pipeline import bundle_input_from_manifest, run_bundle
@@ -79,3 +79,13 @@ def test_rule_of_three():
     assert abs(upper_bound_95(0, 150) - 0.0198) < 1e-3
     assert abs(upper_bound_95(0, 300) - 0.00994) < 1e-4
     assert 0.02 < upper_bound_95(1, 150) < 0.04
+
+
+def test_same_scores_what_rules_use():
+    assert same("text", "NỮ", "Nữ")
+    assert not same("name", "LÝ MẠNH KIỀN", "LÝ MẠNH KIÊN")  # R1 bắt lỗi 1 dấu -> vẫn chấm chặt
+    luong = {"ngay": "2026-01-07", "mo_ta": "TRA LUONG T12", "so_tien": 20000000, "loai": "ghi_co"}
+    atm = {"ngay": "2026-01-09", "mo_ta": "RUT TIEN ATM", "so_tien": 700000, "loai": "ghi_no"}
+    assert same("transactions", [luong, {**atm, "loai": "ghi_co"}], [luong, atm])  # lệch dòng R4 không đọc
+    assert not same("transactions", [{**luong, "so_tien": 20300000}, atm], [luong, atm])
+    assert not same("transactions", None, [luong])
