@@ -93,24 +93,24 @@ Thêm một dòng vào bảng mục 5 cho mỗi cấu hình (model × backend ×
 
 ## 5. Benchmark
 
-Dev, seed 42. Escape ghi dạng *k/n (cận trên 95%)*.
+Dev, seed 42, commit `c22a5d1`. Escape ghi dạng *k/n (cận trên 95%)*. Field chấm theo mục 2 (text không phân biệt hoa/thường, `giao_dich` theo lương từng tháng); cột "Sao kê" là số chấm chặt theo dòng.
 
 ### Toàn bộ dev (50 bộ)
 
 | Cấu hình | Escape | Automation | False review | Field | Field quan trọng | Sao kê: dòng đúng / Ghi có | p95 mỗi bộ | Run |
 |---|---|---|---|---|---|---|---|---|
 | B0: mọi bộ vào REVIEW | 0/25 | 0% | 100% | – | – | – | – | – |
-| Oracle (trần) | 0/25 (≤ 11,3%) | 50,0% | 0% | 100% | 100% | 100% / 100% | ~0 | `20260928-102305_dev_oracle` |
-| Qwen2.5-VL-7B tự host, prompt v4 | **0/25 (≤ 11,3%)** | **32,0%** | 36,0% | 97,0% | 95,8% | 68,6% / 85,4% | 136 s | `20260928-102306_dev_Qwen_Qwen2.5-VL-7B-Instruct` |
+| Oracle (trần) | 0/25 (≤ 11,3%) | 50,0% | 0% | 100% | 100% | 100% / 100% | ~0 | `20260928-103936_dev_oracle` |
+| Qwen2.5-VL-7B tự host, prompt v4 | **0/25 (≤ 11,3%)** | **32,0%** | 36,0% | 98,5% | 99,0% | 68,6% / 85,4% | 136 s | `20260928-103936_dev_Qwen_Qwen2.5-VL-7B-Instruct` |
 
 ### Dev clean (26 bộ, gate M2)
 
 | Cấu hình | Escape | Automation | False review | Field quan trọng | Sao kê: dòng đúng / Ghi có | Gate | Run |
 |---|---|---|---|---|---|---|---|
-| Oracle (trần) | 0/12 (≤ 22,1%) | 53,8% | 0% | 100% | 100% / 100% | – | `20260928-102306_dev_oracle` |
-| Qwen2.5-VL-7B tự host, prompt v4 | **0/12 (≤ 22,1%)** | **42,3%** | 21,4% | **96,1%** | 67,7% / 88,1% | **Đạt** | `20260928-102307_dev_Qwen_Qwen2.5-VL-7B-Instruct` |
+| Oracle (trần) | 0/12 (≤ 22,1%) | 53,8% | 0% | 100% | 100% / 100% | – | `20260928-103937_dev_oracle` |
+| Qwen2.5-VL-7B tự host, prompt v4 | **0/12 (≤ 22,1%)** | **42,3%** | 21,4% | **100%** | 67,7% / 88,1% | **Đạt** | `20260928-103937_dev_Qwen_Qwen2.5-VL-7B-Instruct` |
 
-Qwen2.5-VL-7B theo mức ảnh (field accuracy): clean 97,7%, scan 96,6%, photo 95,7%. Recall rule trên toàn bộ dev: E1–E3, E5–E8 đều 100%; E4 2/3 (bộ còn lại vẫn vào REVIEW vì R4 = unknown, không phải escape). Near-miss: 7/8 không bị gắn cờ; N3 `dev_0041` bị R1 gắn cờ vì model đọc CCCD "KIÊN" thành "KIỀN".
+Qwen2.5-VL-7B theo mức ảnh (field accuracy): clean 99,4%, scan 98,3%, photo 96,6%. `giao_dich` 43/48 sao kê đúng lương từng tháng (4 không parse được, 1 đọc 26.558.000 thành 26.358.000). Recall rule trên toàn bộ dev: E1–E3, E5–E8 đều 100%; E4 2/3 (bộ còn lại vẫn vào REVIEW vì R4 = unknown, không phải escape). Near-miss: 7/8 không bị gắn cờ; N3 `dev_0041` bị R1 gắn cờ vì model đọc CCCD "KIÊN" thành "KIỀN".
 
 ### Chưa chạy
 
@@ -133,6 +133,7 @@ Mỗi dòng là một lỗi thật gặp trên dev, cách sửa, và tác độn
 | 5 | Model chép cả nhãn "ÔNG/BÀ:" vào tên → R1 fail giả | System prompt: chỉ chép giá trị, không chép nhãn (prompt v4) | `hdld.ho_ten_nld` 80% → 100% (5 bộ) |
 | 6 | Sao kê một cột có dấu: model dùng khuôn hai cột và chép "-595,000" vào `ghi_co`; code từ chối vì mâu thuẫn → 21/48 sao kê bị loại | Dấu +/- chép từ ảnh quyết định loại giao dịch, bỏ qua cột model chọn | Toàn bộ dev: automation **12% → 32%**, escape giữ 0/25; sao kê parse được 24 → 44/48 |
 | 7 | Dòng giao dịch dạng chuỗi (ảnh scan) làm crash cả run | Dòng không phải object → lỗi field → REVIEW | Run không còn crash |
+| 8 | Eval chấm quá khắt: `giao_dich` trượt nếu lệch 1/25 dòng (kể cả dòng ghi nợ R4 không đọc); `Nữ` ≠ `NỮ` | Chấm theo thứ rule dùng: lương từng tháng, text không phân biệt hoa/thường; row recall giữ chặt để chẩn đoán | Chỉ đổi số trích xuất: field quan trọng toàn bộ dev 95,8% → 99,0%, dev clean 96,1% → 100%; routing không đổi |
 
 ## 7. Còn lại sau M2
 
@@ -140,4 +141,3 @@ Mỗi dòng là một lỗi thật gặp trên dev, cách sửa, và tác độn
 - **`cccd.ngay_cap` 68%** trên toàn bộ dev.
 - **Latency p95 136 s/bộ**, trên mục tiêu 60 s của spec. Phần lớn nằm ở sao kê (output dài, 2 lượt tự nhất quán). Hướng giảm: tắt tự nhất quán (giữ nếu escape dev không tăng) hoặc chạy song song các giấy tờ trong một bộ.
 - **Chi phí tự host** chưa quy về $/bộ; cần ghi giá thuê GPU/giờ và thời gian chạy.
-- Các run trong bảng có `git_commit` hậu tố `-dirty`: commit rồi chạy lại từ cache (không tốn GPU) để có hash sạch.
