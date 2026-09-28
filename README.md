@@ -29,7 +29,7 @@ Extractor `oracle` trả đúng chuỗi đã in lên ảnh, không gọi model. 
 | dev | 50 (25) | 0% | 11,3% | 50% | 0% | 100% |
 | test | 300 (150) | 0% | 2,0% | 50% | 0% | 100% |
 
-Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. Kết quả với VLM thật (Qwen3-VL-8B): automation 44% trên toàn bộ dev (trần 50%), escape 0/25; chi tiết ở [`docs/m2_eval.md`](docs/m2_eval.md).
+Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. Kết quả với VLM thật (Qwen3-VL-8B), **test set chạy 1 lần**: escape 3/150 = 2,0% (cận trên 5,1%), automation 41,3% (trần 50%). Cả 3 bộ lọt là E1: model "sửa" tên trên đơn cho giống tên quen (Thăng → Thắng), đúng rủi ro spec đã nêu; phân tích ở [`docs/m2_eval.md`](docs/m2_eval.md).
 
 ## Chạy
 

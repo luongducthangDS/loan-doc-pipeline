@@ -135,6 +135,30 @@ Cả hai E4 không bị bắt (`dev_0034` với 7B, `dev_0007` với 8B) là R4 
 
 **Kết luận: chọn Qwen3-VL-8B.** Sau khi nới tự nhất quán (mục 6, #11), automation của hai model ngang nhau (46% và 44% là chênh 1 bộ trên 25, trong nhiễu). Khác biệt nằm ở dữ liệu đi thẳng vào hệ thống: 7B để lọt field sai ở 10/23 bộ auto-pass, 8B không có bộ nào. 8B cũng bền hơn khi ảnh xấu và không gắn cờ nhầm near-miss, đổi lại chậm hơn khoảng 1,2 lần.
 
+### Test set (300 bộ, chạy đúng 1 lần)
+
+Qwen3-VL-8B trên A30, prompt v4, `rules-v2`, pipeline ở commit `9e9d5bb` (run ghi `91f5c24`, commit này chỉ thêm app demo). Run `20260928-164055_test_Qwen_Qwen3-VL-8B-Instruct@a30`.
+
+| Escape | Automation (trần 50%) | False review | Field quan trọng | Dữ liệu bộ AUTO_PASS | Sao kê: dòng đúng / Ghi có | p95 mỗi bộ |
+|---|---|---|---|---|---|---|
+| **3/150 = 2,0% (cận trên 5,1%)** | 41,3% | 19,3% (29/150) | 98,2% | 99,4% field đúng; 124 bộ auto-pass, 17 bộ có field sai | 89,6% / 93,0% | 225 s |
+
+Recall rule (fail / unknown / **sót**): E1 19/0/**3**; E2, E3, E5, E6, E8 100%; E4 23/1/0; E7 20/1/0. Layout C (held-out, không có ở dev) không kém layout A/B: đơn vay C 97,4%, HĐLĐ C 99,7%, sao kê C 98,2%. 3 giấy tờ lỗi trích xuất (JSON hỏng, timeout) đều vào REVIEW.
+
+**3 bộ lọt đều là E1 và đều cùng một cơ chế:** model "sửa" tên trên đơn vay cho thành tên quen, che mất đúng sai lệch E1 cần bắt. Đây là rủi ro spec đã nêu (mục 8, "model sửa tên hoặc dấu cho giống mẫu quen").
+
+| Bộ | Đơn vay in trên ảnh | Model đọc (confidence) | CCCD |
+|---|---|---|---|
+| `test_0081` | Hoàng Văn **Thăng** | Hoàng Văn **Thắng** (high) | HOÀNG VĂN THẮNG |
+| `test_0092` | Mai **Thùỳ** Ngọc | Mai **Thùy** Ngọc (high) | MAI THÙY NGỌC |
+| `test_0297` | Bùi Việt **Huỵ** | Bùi Việt **Huy** (high) | BÙI VIỆT HUY |
+
+Hai lượt tự nhất quán cùng "sửa" giống nhau nên confidence vẫn high. Dev chỉ có 4 bộ E1 và bắt đủ cả 4, nên lỗ này không lộ ra trên dev. Ghi chú về dữ liệu: "Thùỳ" (hai dấu thanh) không phải âm tiết tiếng Việt hợp lệ, là lỗi datagen dễ bị model tự sửa hơn lỗi thật; nhưng "Thăng"/"Thắng" là hai tên thật khác nhau, nên lỗ này có thật.
+
+**Không sửa rồi chạy lại trên test** (mục 3, quy tắc 4). Hướng cho phiên bản sau, làm và đo trên dev: thêm nhiều bộ E1 kiểu "tên thật gần tên phổ biến" vào dev; lượt 2 của tự nhất quán cho field tên dùng prompt chép từng ký tự/âm tiết thay vì cùng prompt; so tên đơn vay với chữ ký hoặc dòng tên thứ hai nếu có.
+
+False review 29/150 chủ yếu do R4 unknown (15, sao kê đọc không chắc) và R1 (12, model đọc lệch dấu tên trên bộ sạch: phía an toàn của cùng điểm yếu đọc dấu).
+
 ### Chưa chạy
 
 | Cấu hình | Mục đích |
