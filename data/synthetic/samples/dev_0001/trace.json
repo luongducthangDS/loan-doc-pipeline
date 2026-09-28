@@ -1,0 +1,477 @@
+{
+ "bundle_id": "dev_0001",
+ "steps": {
+  "ingest_ms": 5,
+  "extract_validate_ms": 131,
+  "rules_route_ms": 0
+ },
+ "latency_ms": 161375,
+ "n_calls": 10,
+ "cost_usd": 0.0,
+ "unreadable": [],
+ "extractions": [
+  {
+   "bundle_id": "dev_0001",
+   "doc_id": "d1",
+   "doc_type": "cccd",
+   "fields": {
+    "so_cccd": {
+     "value": "038203789630",
+     "raw": "038203789630",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ho_ten": {
+     "value": "ĐINH VIỆT ĐẠT",
+     "raw": "ĐINH VIỆT ĐẠT",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "2003-01-01",
+     "raw": "01/01/2003",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "gioi_tinh": {
+     "value": "Nam",
+     "raw": "Nam",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "que_quan": {
+     "value": "Phường Máy Tơ, Quận Ngô Quyền, Hải Phòng",
+     "raw": "Phường Máy Tơ, Quận Ngô Quyền, Hải Phòng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "noi_thuong_tru": {
+     "value": "Xã Quảng Tâm, TP. Thanh Hóa, Thanh Hóa",
+     "raw": "Xã Quảng Tâm, TP. Thanh Hóa, Thanh Hóa",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_cap": {
+     "value": "2024-09-30",
+     "raw": "30/09/2024",
+     "confidence": "high",
+     "page": 2,
+     "error": null
+    },
+    "ngay_het_han": {
+     "value": "2028-01-01",
+     "raw": "01/01/2028",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 23671,
+   "n_calls": 4
+  },
+  {
+   "bundle_id": "dev_0001",
+   "doc_id": "d2",
+   "doc_type": "don_vay",
+   "fields": {
+    "ho_ten": {
+     "value": "ĐINH VIỆT ĐẠT",
+     "raw": "Đinh Việt Đạt",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_cccd": {
+     "value": "038203789630",
+     "raw": "038203789630",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "2003-01-01",
+     "raw": "01-01-2003",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_dien_thoai": {
+     "value": "0587153340",
+     "raw": "0587 153 340",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "dia_chi": {
+     "value": "Xã Quảng Tâm, TP. Thanh Hóa, Thanh Hóa",
+     "raw": "Xã Quảng Tâm, TP. Thanh Hóa, Thanh Hóa",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY TNHH CÔNG NGHỆ HỒNG HÀ",
+     "raw": "CÔNG TY TNHH CÔNG NGHỆ HỒNG HÀ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thu_nhap_thang": {
+     "value": 28500000,
+     "raw": "28.500.000đ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tien_vay": {
+     "value": 25000000,
+     "raw": "25.000.000đ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thoi_han_thang": {
+     "value": 60,
+     "raw": "60",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_dich": {
+     "value": "Mua xe máy",
+     "raw": "Mua xe máy",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk_nhan_luong": {
+     "value": "7212153884425",
+     "raw": "7212 1538 8442 5",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ky": {
+     "value": "2026-02-12",
+     "raw": "12/02/2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 23526,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0001",
+   "doc_id": "d3",
+   "doc_type": "hdld",
+   "fields": {
+    "ho_ten_nld": {
+     "value": "ĐINH VIỆT ĐẠT",
+     "raw": "Đinh Việt Đạt",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY TNHH CÔNG NGHỆ HỒNG HÀ",
+     "raw": "CÔNG TY TNHH CÔNG NGHỆ HỒNG HÀ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "chuc_danh": {
+     "value": "Chuyên viên nhân sự",
+     "raw": "Chuyên viên nhân sự",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "loai_hd": {
+     "value": "xac_dinh_thoi_han",
+     "raw": "Xác định thời hạn 36 tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_bat_dau": {
+     "value": "2025-01-12",
+     "raw": "12/01/2025",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ket_thuc": {
+     "value": "2028-01-12",
+     "raw": "12/01/2028",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_luong": {
+     "value": 35000000,
+     "raw": "35.000.000 đồng/tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 15887,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0001",
+   "doc_id": "d4",
+   "doc_type": "sao_ke",
+   "fields": {
+    "chu_tk": {
+     "value": "DINH VIET DAT",
+     "raw": "DINH VIET DAT",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk": {
+     "value": "7212153884425",
+     "raw": "7212153884425",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ky_tu": {
+     "value": "2025-10-24",
+     "raw": "24/10/2025",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ky_den": {
+     "value": "2026-01-23",
+     "raw": "23/01/2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "giao_dich": {
+     "value": null,
+     "raw": "[{\"ngay\": \"31/10/2025\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"2.255.000\"}, {\"ngay\": \"08/11/2025\", \"mo_ta\": \"SALARY 10/2025 CONG TY TNHH CONG NGHE HONG HA\", \"ghi_co\": \"30.542.000\", \"ghi_no\": \"1.085.000\"}, {\"ngay\": \"14/11/2025\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"1.667.000\"}, {\"ngay\": \"20/11/2025\", \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\", \"ghi_co\": null, \"ghi_no\": \"1.667.000\"}, {\"ngay\": \"23/11/2025\", \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\", \"ghi_co\": null, \"ghi_no\": \"856.000\"}, {\"ngay\": \"24/11/2025\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"1.329.000\"}, {\"ngay\": \"27/11/2025\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"708.000\"}, {\"ngay\": \"01/12/2025\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"53.000\"}, {\"ngay\": \"02/12/2025\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"3.536.000\"}, {\"ngay\": \"04/12/2025\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"697.000\"}, {\"ngay\": \"05/12/2025\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"2.771.000\"}, {\"ngay\": \"08/12/2025\", \"mo_ta\": \"SALARY 11/2025 CONG TY TNHH CONG NGHE HONG HA\", \"ghi_co\": \"30.959.000\", \"ghi_no\": \"682.000\"}, {\"ngay\": \"09/12/2025\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"2.460.000\"}, {\"ngay\": \"11/12/2025\", \"mo_ta\": \"NHAN CK TU LY THU TRANG\", \"ghi_co\": null, \"ghi_no\": \"266.000\"}, {\"ngay\": \"12/12/2025\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"2.486.000\"}, {\"ngay\": \"13/12/2025\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"431.000\"}, {\"ngay\": \"18/12/2025\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"1.649.000\"}, {\"ngay\": \"24/12/2025\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"2.455.000\"}, {\"ngay\": \"01/01/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"1.731.000\"}, {\"ngay\": \"02/01/2026\", \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\", \"ghi_co\": null, \"ghi_no\": \"2.013.000\"}, {\"ngay\": \"07/01/2026\", \"mo_ta\": \"THANH TOAN QR SIEU THI\", \"ghi_co\": null, \"ghi_no\": \"31.029.000\"}, {\"ngay\": \"08/01/2026\", \"mo_ta\": \"SALARY 12/2025 CONG TY TNHH CONG NGHE HONG HA\", \"ghi_co\": \"31.029.000\", \"ghi_no\": \"1.584.000\"}, {\"ngay\": \"14/01/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"1.398.000\"}, {\"ngay\": \"17/01/2026\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"926.000\"}, {\"ngay\": \"21/01/2026\", \"mo_ta\": \"THANH TOAN QR SIEU THI\", \"ghi_co\": null, \"ghi_no\": \"926.000\"}]",
+     "confidence": "low",
+     "page": 1,
+     "error": "dòng cần đúng 1 cột có số tiền: {'ngay': '08/11/2025', 'mo_ta': 'SALARY 10/2025 CONG TY TNHH CONG NGHE HONG HA', 'ghi_co': '30.542.000', 'ghi_no': '1.085.000'}"
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 98286,
+   "n_calls": 2
+  }
+ ],
+ "model_outputs": {
+  "d1": "{\n  \"so_cccd\": {\"raw\": \"038203789630\", \"page\": 1},\n  \"ho_ten\": {\"raw\": \"ĐINH VIỆT ĐẠT\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"01/01/2003\", \"page\": 1},\n  \"gioi_tinh\": {\"raw\": \"Nam\", \"page\": 1},\n  \"que_quan\": {\"raw\": \"Phường Máy Tơ, Quận Ngô Quyền, Hải Phòng\", \"page\": 1},\n  \"noi_thuong_tru\": {\"raw\": \"Xã Quảng Tâm, TP. Thanh Hóa, Thanh Hóa\", \"page\": 1},\n  \"ngay_cap\": null,\n  \"ngay_het_han\": {\"raw\": \"01/01/2028\", \"page\": 1}\n}\n---\n{\n  \"so_cccd\": null,\n  \"ho_ten\": null,\n  \"ngay_sinh\": null,\n  \"gioi_tinh\": null,\n  \"que_quan\": null,\n  \"noi_thuong_tru\": null,\n  \"ngay_cap\": {\n    \"raw\": \"30/09/2024\",\n    \"page\": 2\n  },\n  \"ngay_het_han\": null,\n  \"giao_dich\": null\n}",
+  "d2": "{\n  \"ho_ten\": {\"raw\": \"Đinh Việt Đạt\", \"page\": 1},\n  \"so_cccd\": {\"raw\": \"038203789630\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"01-01-2003\", \"page\": 1},\n  \"so_dien_thoai\": {\"raw\": \"0587 153 340\", \"page\": 1},\n  \"dia_chi\": {\"raw\": \"Xã Quảng Tâm, TP. Thanh Hóa, Thanh Hóa\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY TNHH CÔNG NGHỆ HỒNG HÀ\", \"page\": 1},\n  \"thu_nhap_thang\": {\"raw\": \"28.500.000đ\", \"page\": 1},\n  \"so_tien_vay\": {\"raw\": \"25.000.000đ\", \"page\": 1},\n  \"thoi_han_thang\": {\"raw\": \"60\", \"page\": 1},\n  \"muc_dich\": {\"raw\": \"Mua xe máy\", \"page\": 1},\n  \"so_tk_nhan_luong\": {\"raw\": \"7212 1538 8442 5\", \"page\": 1},\n  \"ngay_ky\": {\"raw\": \"12/02/2026\", \"page\": 1}\n}",
+  "d3": "{\n  \"ho_ten_nld\": {\"raw\": \"Đinh Việt Đạt\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY TNHH CÔNG NGHỆ HỒNG HÀ\", \"page\": 1},\n  \"chuc_danh\": {\"raw\": \"Chuyên viên nhân sự\", \"page\": 1},\n  \"loai_hd\": {\"raw\": \"Xác định thời hạn 36 tháng\", \"page\": 1},\n  \"ngay_bat_dau\": {\"raw\": \"12/01/2025\", \"page\": 1},\n  \"ngay_ket_thuc\": {\"raw\": \"12/01/2028\", \"page\": 1},\n  \"muc_luong\": {\"raw\": \"35.000.000 đồng/tháng\", \"page\": 1}\n}",
+  "d4": "{\n  \"chu_tk\": {\n    \"raw\": \"DINH VIET DAT\",\n    \"page\": 1\n  },\n  \"so_tk\": {\n    \"raw\": \"7212153884425\",\n    \"page\": 1\n  },\n  \"ky_tu\": {\n    \"raw\": \"24/10/2025\",\n    \"page\": 1\n  },\n  \"ky_den\": {\n    \"raw\": \"23/01/2026\",\n    \"page\": 1\n  },\n  \"giao_dich\": {\n    \"raw\": [\n      {\n        \"ngay\": \"31/10/2025\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.255.000\"\n      },\n      {\n        \"ngay\": \"08/11/2025\",\n        \"mo_ta\": \"SALARY 10/2025 CONG TY TNHH CONG NGHE HONG HA\",\n        \"ghi_co\": \"30.542.000\",\n        \"ghi_no\": \"1.085.000\"\n      },\n      {\n        \"ngay\": \"14/11/2025\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.667.000\"\n      },\n      {\n        \"ngay\": \"20/11/2025\",\n        \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.667.000\"\n      },\n      {\n        \"ngay\": \"23/11/2025\",\n        \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"856.000\"\n      },\n      {\n        \"ngay\": \"24/11/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.329.000\"\n      },\n      {\n        \"ngay\": \"27/11/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"708.000\"\n      },\n      {\n        \"ngay\": \"01/12/2025\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"53.000\"\n      },\n      {\n        \"ngay\": \"02/12/2025\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3.536.000\"\n      },\n      {\n        \"ngay\": \"04/12/2025\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"697.000\"\n      },\n      {\n        \"ngay\": \"05/12/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.771.000\"\n      },\n      {\n        \"ngay\": \"08/12/2025\",\n        \"mo_ta\": \"SALARY 11/2025 CONG TY TNHH CONG NGHE HONG HA\",\n        \"ghi_co\": \"30.959.000\",\n        \"ghi_no\": \"682.000\"\n      },\n      {\n        \"ngay\": \"09/12/2025\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.460.000\"\n      },\n      {\n        \"ngay\": \"11/12/2025\",\n        \"mo_ta\": \"NHAN CK TU LY THU TRANG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"266.000\"\n      },\n      {\n        \"ngay\": \"12/12/2025\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.486.000\"\n      },\n      {\n        \"ngay\": \"13/12/2025\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"431.000\"\n      },\n      {\n        \"ngay\": \"18/12/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.649.000\"\n      },\n      {\n        \"ngay\": \"24/12/2025\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.455.000\"\n      },\n      {\n        \"ngay\": \"01/01/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.731.000\"\n      },\n      {\n        \"ngay\": \"02/01/2026\",\n        \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.013.000\"\n      },\n      {\n        \"ngay\": \"07/01/2026\",\n        \"mo_ta\": \"THANH TOAN QR SIEU THI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"31.029.000\"\n      },\n      {\n        \"ngay\": \"08/01/2026\",\n        \"mo_ta\": \"SALARY 12/2025 CONG TY TNHH CONG NGHE HONG HA\",\n        \"ghi_co\": \"31.029.000\",\n        \"ghi_no\": \"1.584.000\"\n      },\n      {\n        \"ngay\": \"14/01/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.398.000\"\n      },\n      {\n        \"ngay\": \"17/01/2026\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"926.000\"\n      },\n      {\n        \"ngay\": \"21/01/2026\",\n        \"mo_ta\": \"THANH TOAN QR SIEU THI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"926.000\"\n      }\n    ],\n    \"page\": 1\n  }\n}"
+ },
+ "extract_errors": {},
+ "checks": [
+  {
+   "rule_id": "R0",
+   "status": "pass",
+   "evidence": [],
+   "message": "Đủ 4 giấy tờ"
+  },
+  {
+   "rule_id": "R1",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ho_ten",
+     "value": "ĐINH VIỆT ĐẠT",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ho_ten",
+     "value": "ĐINH VIỆT ĐẠT",
+     "known": true
+    },
+    {
+     "doc_type": "hdld",
+     "field": "ho_ten_nld",
+     "value": "ĐINH VIỆT ĐẠT",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "chu_tk",
+     "value": "DINH VIET DAT",
+     "known": true
+    }
+   ],
+   "message": "Họ tên khớp"
+  },
+  {
+   "rule_id": "R2",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_cccd",
+     "value": "038203789630",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "so_cccd",
+     "value": "038203789630",
+     "known": true
+    }
+   ],
+   "message": "Số CCCD khớp"
+  },
+  {
+   "rule_id": "R3",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_sinh",
+     "value": "2003-01-01",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ngay_sinh",
+     "value": "2003-01-01",
+     "known": true
+    }
+   ],
+   "message": "Ngày sinh khớp"
+  },
+  {
+   "rule_id": "R4",
+   "status": "unknown",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "thu_nhap_thang",
+     "value": 28500000,
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "giao_dich",
+     "value": null,
+     "known": false
+    }
+   ],
+   "message": "Thiếu hoặc không chắc: sao_ke.giao_dich"
+  },
+  {
+   "rule_id": "R5",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "cccd",
+     "field": "ngay_het_han",
+     "value": "2028-01-01",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-02-12",
+     "known": true
+    }
+   ],
+   "message": "CCCD còn hạn: cccd.ngay_het_han=2028-01-01 ≥ don_vay.ngay_ky=2026-02-12"
+  },
+  {
+   "rule_id": "R6",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_tk_nhan_luong",
+     "value": "7212153884425",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "so_tk",
+     "value": "7212153884425",
+     "known": true
+    }
+   ],
+   "message": "Số tài khoản nhận lương khớp"
+  },
+  {
+   "rule_id": "R7",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "hdld",
+     "field": "ngay_ket_thuc",
+     "value": "2028-01-12",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-02-12",
+     "known": true
+    }
+   ],
+   "message": "HĐLĐ còn hiệu lực: hdld.ngay_ket_thuc=2028-01-12 ≥ don_vay.ngay_ky=2026-02-12"
+  },
+  {
+   "rule_id": "R8",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_tu",
+     "value": "2025-10-24",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_den",
+     "value": "2026-01-23",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-02-12",
+     "known": true
+    }
+   ],
+   "message": "Sao kê kết thúc 20 ngày trước ngày ký (tối đa 30); phủ đủ 3 tháng: có"
+  }
+ ],
+ "decision": {
+  "bundle_id": "dev_0001",
+  "route": "REVIEW",
+  "reasons": [
+   "UNKNOWN:R4",
+   "LOW_CONF:sao_ke.giao_dich"
+  ],
+  "rules_version": "rules-v2",
+  "thresholds_version": "thr-v1"
+ }
+}

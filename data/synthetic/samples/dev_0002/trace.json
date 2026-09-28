@@ -1,0 +1,619 @@
+{
+ "bundle_id": "dev_0002",
+ "steps": {
+  "ingest_ms": 7,
+  "extract_validate_ms": 26,
+  "rules_route_ms": 0
+ },
+ "latency_ms": 133461,
+ "n_calls": 10,
+ "cost_usd": 0.0,
+ "unreadable": [],
+ "extractions": [
+  {
+   "bundle_id": "dev_0002",
+   "doc_id": "d1",
+   "doc_type": "cccd",
+   "fields": {
+    "so_cccd": {
+     "value": "079300551897",
+     "raw": "079300551897",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ho_ten": {
+     "value": "BÙI KIM LAN",
+     "raw": "BÙI KIM LAN",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "2000-12-05",
+     "raw": "05/12/2000",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "gioi_tinh": {
+     "value": "Nữ",
+     "raw": "Nữ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "que_quan": {
+     "value": "Phường Máy Tơ, Quận Ngô Quyền, Hải Phòng",
+     "raw": "Phường Máy Tơ, Quận Ngô Quyền, Hải Phòng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "noi_thuong_tru": {
+     "value": "Phường 12, Quận Tân Bình, TP. Hồ Chí Minh",
+     "raw": "Phường 12, Quận Tân Bình, TP. Hồ Chí Minh",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_cap": {
+     "value": "2026-02-12",
+     "raw": "12/02/2026",
+     "confidence": "high",
+     "page": 2,
+     "error": null
+    },
+    "ngay_het_han": {
+     "value": "2040-12-05",
+     "raw": "05/12/2040",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 19509,
+   "n_calls": 4
+  },
+  {
+   "bundle_id": "dev_0002",
+   "doc_id": "d2",
+   "doc_type": "don_vay",
+   "fields": {
+    "ho_ten": {
+     "value": "BÙI KIM LAN",
+     "raw": "Bùi Kim Lan",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_cccd": {
+     "value": "079300551897",
+     "raw": "079300551897",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "2000-12-05",
+     "raw": "05/12/2000",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_dien_thoai": {
+     "value": "0377492281",
+     "raw": "0377492281",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "dia_chi": {
+     "value": "Phường 12, Quận Tân Bình, TP. Hồ Chí Minh",
+     "raw": "Phường 12, Quận Tân Bình, TP. Hồ Chí Minh",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM",
+     "raw": "CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thu_nhap_thang": {
+     "value": 32800000,
+     "raw": "32.800.000 VND",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tien_vay": {
+     "value": 395000000,
+     "raw": "395.000.000 đồng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thoi_han_thang": {
+     "value": 12,
+     "raw": "12 tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_dich": {
+     "value": "Sửa chữa nhà ở",
+     "raw": "Sửa chữa nhà ở",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk_nhan_luong": {
+     "value": "5411066449133",
+     "raw": "5411066449133",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ky": {
+     "value": "2026-09-15",
+     "raw": "Hà Nội, ngày 15 tháng 09 năm 2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 22340,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0002",
+   "doc_id": "d3",
+   "doc_type": "hdld",
+   "fields": {
+    "ho_ten_nld": {
+     "value": "BÙI KIM LAN",
+     "raw": "Bùi Kim Lan",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM",
+     "raw": "CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "chuc_danh": {
+     "value": "Trưởng nhóm bán hàng",
+     "raw": "Trưởng nhóm bán hàng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "loai_hd": {
+     "value": "xac_dinh_thoi_han",
+     "raw": "Xác định thời hạn 12 tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_bat_dau": {
+     "value": "2026-05-02",
+     "raw": "ngày 02 tháng 05 năm 2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ket_thuc": {
+     "value": "2027-05-02",
+     "raw": "ngày 02 tháng 05 năm 2027",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_luong": {
+     "value": 42500000,
+     "raw": "42.500.000đ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 12282,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0002",
+   "doc_id": "d4",
+   "doc_type": "sao_ke",
+   "fields": {
+    "chu_tk": {
+     "value": "BUI KIM LAN",
+     "raw": "BUI KIM LAN",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk": {
+     "value": "5411066449133",
+     "raw": "5411066449133",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ky_tu": {
+     "value": "2026-06-08",
+     "raw": "08/06/2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ky_den": {
+     "value": "2026-09-07",
+     "raw": "07/09/2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "giao_dich": {
+     "value": [
+      {
+       "ngay": "2026-06-11",
+       "mo_ta": "NHAN CK TU LY MANH KIEN",
+       "so_tien": 2803000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-06-12",
+       "mo_ta": "THANH TOAN THE TIN DUNG",
+       "so_tien": 1254000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-06-19",
+       "mo_ta": "RUT TIEN ATM",
+       "so_tien": 4190000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-06-21",
+       "mo_ta": "PHI QUAN LY TAI KHOAN",
+       "so_tien": 796000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-06-26",
+       "mo_ta": "NAP TIEN DIEN THOAI",
+       "so_tien": 424000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-04",
+       "mo_ta": "THANH TOAN THE TIN DUNG",
+       "so_tien": 76000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-05",
+       "mo_ta": "THANH TOAN THE TIN DUNG",
+       "so_tien": 4233000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-07",
+       "mo_ta": "CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T6",
+       "so_tien": 39009000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-07-11",
+       "mo_ta": "THANH TOAN QR SIEU THI",
+       "so_tien": 394000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-13",
+       "mo_ta": "PHI QUAN LY TAI KHOAN",
+       "so_tien": 829000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-17",
+       "mo_ta": "THANH TOAN VE MAY BAY",
+       "so_tien": 303000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-20",
+       "mo_ta": "CHUYEN KHOAN TIEN NHA",
+       "so_tien": 2799000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-21",
+       "mo_ta": "THANH TOAN THE TIN DUNG",
+       "so_tien": 3135000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-29",
+       "mo_ta": "RUT TIEN ATM",
+       "so_tien": 1006000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-07-30",
+       "mo_ta": "PHI QUAN LY TAI KHOAN",
+       "so_tien": 3979000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-08-03",
+       "mo_ta": "RUT TIEN ATM",
+       "so_tien": 1788000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-08-07",
+       "mo_ta": "CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T7",
+       "so_tien": 37897000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-08-10",
+       "mo_ta": "THANH TOAN QR SIEU THI",
+       "so_tien": 4440000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-08-12",
+       "mo_ta": "RUT TIEN ATM",
+       "so_tien": 2344000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-08-14",
+       "mo_ta": "PHI QUAN LY TAI KHOAN",
+       "so_tien": 4541000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-08-17",
+       "mo_ta": "THANH TOAN HOA DON INTERNET",
+       "so_tien": 884000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-08-18",
+       "mo_ta": "THANH TOAN THE TIN DUNG",
+       "so_tien": 583000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-09-02",
+       "mo_ta": "THANH TOAN HOA DON DIEN",
+       "so_tien": 2256000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-09-07",
+       "mo_ta": "CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T8",
+       "so_tien": 37043000,
+       "loai": "ghi_co"
+      }
+     ],
+     "raw": "[{\"ngay\": \"11/06/2026\", \"mo_ta\": \"NHAN CK TU LY MANH KIEN\", \"ghi_co\": \"2,803,000\", \"ghi_no\": null}, {\"ngay\": \"12/06/2026\", \"mo_ta\": \"THANH TOAN THE TIN DUNG\", \"ghi_co\": null, \"ghi_no\": \"1,254,000\"}, {\"ngay\": \"19/06/2026\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"4,190,000\"}, {\"ngay\": \"21/06/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"796,000\"}, {\"ngay\": \"26/06/2026\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"424,000\"}, {\"ngay\": \"04/07/2026\", \"mo_ta\": \"THANH TOAN THE TIN DUNG\", \"ghi_co\": null, \"ghi_no\": \"76,000\"}, {\"ngay\": \"05/07/2026\", \"mo_ta\": \"THANH TOAN THE TIN DUNG\", \"ghi_co\": null, \"ghi_no\": \"4,233,000\"}, {\"ngay\": \"07/07/2026\", \"mo_ta\": \"CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T6\", \"ghi_co\": \"39,009,000\", \"ghi_no\": null}, {\"ngay\": \"11/07/2026\", \"mo_ta\": \"THANH TOAN QR SIEU THI\", \"ghi_co\": null, \"ghi_no\": \"394,000\"}, {\"ngay\": \"13/07/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"829,000\"}, {\"ngay\": \"17/07/2026\", \"mo_ta\": \"THANH TOAN VE MAY BAY\", \"ghi_co\": null, \"ghi_no\": \"303,000\"}, {\"ngay\": \"20/07/2026\", \"mo_ta\": \"CHUYEN KHOAN TIEN NHA\", \"ghi_co\": null, \"ghi_no\": \"2,799,000\"}, {\"ngay\": \"21/07/2026\", \"mo_ta\": \"THANH TOAN THE TIN DUNG\", \"ghi_co\": null, \"ghi_no\": \"3,135,000\"}, {\"ngay\": \"29/07/2026\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"1,006,000\"}, {\"ngay\": \"30/07/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"3,979,000\"}, {\"ngay\": \"03/08/2026\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"1,788,000\"}, {\"ngay\": \"07/08/2026\", \"mo_ta\": \"CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T7\", \"ghi_co\": \"37,897,000\", \"ghi_no\": null}, {\"ngay\": \"10/08/2026\", \"mo_ta\": \"THANH TOAN QR SIEU THI\", \"ghi_co\": null, \"ghi_no\": \"4,440,000\"}, {\"ngay\": \"12/08/2026\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"2,344,000\"}, {\"ngay\": \"14/08/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"4,541,000\"}, {\"ngay\": \"17/08/2026\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"884,000\"}, {\"ngay\": \"18/08/2026\", \"mo_ta\": \"THANH TOAN THE TIN DUNG\", \"ghi_co\": null, \"ghi_no\": \"583,000\"}, {\"ngay\": \"02/09/2026\", \"mo_ta\": \"THANH TOAN HOA DON DIEN\", \"ghi_co\": null, \"ghi_no\": \"2,256,000\"}, {\"ngay\": \"07/09/2026\", \"mo_ta\": \"CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T8\", \"ghi_co\": \"37,043,000\", \"ghi_no\": null}]",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 79323,
+   "n_calls": 2
+  }
+ ],
+ "model_outputs": {
+  "d1": "{\n  \"so_cccd\": {\"raw\": \"079300551897\", \"page\": 1},\n  \"ho_ten\": {\"raw\": \"BÙI KIM LAN\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"05/12/2000\", \"page\": 1},\n  \"gioi_tinh\": {\"raw\": \"Nữ\", \"page\": 1},\n  \"que_quan\": {\"raw\": \"Phường Máy Tơ, Quận Ngô Quyền, Hải Phòng\", \"page\": 1},\n  \"noi_thuong_tru\": {\"raw\": \"Phường 12, Quận Tân Bình, TP. Hồ Chí Minh\", \"page\": 1},\n  \"ngay_cap\": null,\n  \"ngay_het_han\": {\"raw\": \"05/12/2040\", \"page\": 1}\n}\n---\n{\n  \"so_cccd\": null,\n  \"ho_ten\": null,\n  \"ngay_sinh\": null,\n  \"gioi_tinh\": null,\n  \"que_quan\": null,\n  \"noi_thuong_tru\": null,\n  \"ngay_cap\": {\"raw\": \"12/02/2026\", \"page\": 2},\n  \"ngay_het_han\": null,\n  \"giao_dich\": {\"raw\": [], \"page\": 1}\n}",
+  "d2": "{\n  \"ho_ten\": {\"raw\": \"Bùi Kim Lan\", \"page\": 1},\n  \"so_cccd\": {\"raw\": \"079300551897\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"05/12/2000\", \"page\": 1},\n  \"so_dien_thoai\": {\"raw\": \"0377492281\", \"page\": 1},\n  \"dia_chi\": {\"raw\": \"Phường 12, Quận Tân Bình, TP. Hồ Chí Minh\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM\", \"page\": 1},\n  \"thu_nhap_thang\": {\"raw\": \"32.800.000 VND\", \"page\": 1},\n  \"so_tien_vay\": {\"raw\": \"395.000.000 đồng\", \"page\": 1},\n  \"thoi_han_thang\": {\"raw\": \"12 tháng\", \"page\": 1},\n  \"muc_dich\": {\"raw\": \"Sửa chữa nhà ở\", \"page\": 1},\n  \"so_tk_nhan_luong\": {\"raw\": \"5411066449133\", \"page\": 1},\n  \"ngay_ky\": {\"raw\": \"Hà Nội, ngày 15 tháng 09 năm 2026\", \"page\": 1}\n}",
+  "d3": "{\n  \"ho_ten_nld\": {\"raw\": \"Bùi Kim Lan\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY CỔ PHẦN THƯƠNG MẠI BẮC NAM\", \"page\": 1},\n  \"chuc_danh\": {\"raw\": \"Trưởng nhóm bán hàng\", \"page\": 1},\n  \"loai_hd\": {\"raw\": \"Xác định thời hạn 12 tháng\", \"page\": 1},\n  \"ngay_bat_dau\": {\"raw\": \"ngày 02 tháng 05 năm 2026\", \"page\": 1},\n  \"ngay_ket_thuc\": {\"raw\": \"ngày 02 tháng 05 năm 2027\", \"page\": 1},\n  \"muc_luong\": {\"raw\": \"42.500.000đ\", \"page\": 1}\n}",
+  "d4": "{\n  \"chu_tk\": {\n    \"raw\": \"BUI KIM LAN\",\n    \"page\": 1\n  },\n  \"so_tk\": {\n    \"raw\": \"5411066449133\",\n    \"page\": 1\n  },\n  \"ky_tu\": {\n    \"raw\": \"08/06/2026\",\n    \"page\": 1\n  },\n  \"ky_den\": {\n    \"raw\": \"07/09/2026\",\n    \"page\": 1\n  },\n  \"giao_dich\": {\n    \"raw\": [\n      {\n        \"ngay\": \"11/06/2026\",\n        \"mo_ta\": \"NHAN CK TU LY MANH KIEN\",\n        \"ghi_co\": \"2,803,000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"12/06/2026\",\n        \"mo_ta\": \"THANH TOAN THE TIN DUNG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1,254,000\"\n      },\n      {\n        \"ngay\": \"19/06/2026\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"4,190,000\"\n      },\n      {\n        \"ngay\": \"21/06/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"796,000\"\n      },\n      {\n        \"ngay\": \"26/06/2026\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"424,000\"\n      },\n      {\n        \"ngay\": \"04/07/2026\",\n        \"mo_ta\": \"THANH TOAN THE TIN DUNG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"76,000\"\n      },\n      {\n        \"ngay\": \"05/07/2026\",\n        \"mo_ta\": \"THANH TOAN THE TIN DUNG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"4,233,000\"\n      },\n      {\n        \"ngay\": \"07/07/2026\",\n        \"mo_ta\": \"CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T6\",\n        \"ghi_co\": \"39,009,000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"11/07/2026\",\n        \"mo_ta\": \"THANH TOAN QR SIEU THI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"394,000\"\n      },\n      {\n        \"ngay\": \"13/07/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"829,000\"\n      },\n      {\n        \"ngay\": \"17/07/2026\",\n        \"mo_ta\": \"THANH TOAN VE MAY BAY\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"303,000\"\n      },\n      {\n        \"ngay\": \"20/07/2026\",\n        \"mo_ta\": \"CHUYEN KHOAN TIEN NHA\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2,799,000\"\n      },\n      {\n        \"ngay\": \"21/07/2026\",\n        \"mo_ta\": \"THANH TOAN THE TIN DUNG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3,135,000\"\n      },\n      {\n        \"ngay\": \"29/07/2026\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1,006,000\"\n      },\n      {\n        \"ngay\": \"30/07/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3,979,000\"\n      },\n      {\n        \"ngay\": \"03/08/2026\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1,788,000\"\n      },\n      {\n        \"ngay\": \"07/08/2026\",\n        \"mo_ta\": \"CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T7\",\n        \"ghi_co\": \"37,897,000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"10/08/2026\",\n        \"mo_ta\": \"THANH TOAN QR SIEU THI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"4,440,000\"\n      },\n      {\n        \"ngay\": \"12/08/2026\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2,344,000\"\n      },\n      {\n        \"ngay\": \"14/08/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"4,541,000\"\n      },\n      {\n        \"ngay\": \"17/08/2026\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"884,000\"\n      },\n      {\n        \"ngay\": \"18/08/2026\",\n        \"mo_ta\": \"THANH TOAN THE TIN DUNG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"583,000\"\n      },\n      {\n        \"ngay\": \"02/09/2026\",\n        \"mo_ta\": \"THANH TOAN HOA DON DIEN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2,256,000\"\n      },\n      {\n        \"ngay\": \"07/09/2026\",\n        \"mo_ta\": \"CONG TY CO PHAN THUONG MAI BAC NAM TRA LUONG T8\",\n        \"ghi_co\": \"37,043,000\",\n        \"ghi_no\": null\n      }\n    ],\n    \"page\": 1\n  }\n}"
+ },
+ "extract_errors": {},
+ "checks": [
+  {
+   "rule_id": "R0",
+   "status": "pass",
+   "evidence": [],
+   "message": "Đủ 4 giấy tờ"
+  },
+  {
+   "rule_id": "R1",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ho_ten",
+     "value": "BÙI KIM LAN",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ho_ten",
+     "value": "BÙI KIM LAN",
+     "known": true
+    },
+    {
+     "doc_type": "hdld",
+     "field": "ho_ten_nld",
+     "value": "BÙI KIM LAN",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "chu_tk",
+     "value": "BUI KIM LAN",
+     "known": true
+    }
+   ],
+   "message": "Họ tên khớp"
+  },
+  {
+   "rule_id": "R2",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_cccd",
+     "value": "079300551897",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "so_cccd",
+     "value": "079300551897",
+     "known": true
+    }
+   ],
+   "message": "Số CCCD khớp"
+  },
+  {
+   "rule_id": "R3",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_sinh",
+     "value": "2000-12-05",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ngay_sinh",
+     "value": "2000-12-05",
+     "known": true
+    }
+   ],
+   "message": "Ngày sinh khớp"
+  },
+  {
+   "rule_id": "R4",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "thu_nhap_thang",
+     "value": 32800000,
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "luong_tb_3_thang",
+     "value": 37983000,
+     "known": true
+    }
+   ],
+   "message": "Thu nhập khai 32,800,000 ≤ lương TB 37,983,000 × 1.1"
+  },
+  {
+   "rule_id": "R5",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "cccd",
+     "field": "ngay_het_han",
+     "value": "2040-12-05",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-09-15",
+     "known": true
+    }
+   ],
+   "message": "CCCD còn hạn: cccd.ngay_het_han=2040-12-05 ≥ don_vay.ngay_ky=2026-09-15"
+  },
+  {
+   "rule_id": "R6",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_tk_nhan_luong",
+     "value": "5411066449133",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "so_tk",
+     "value": "5411066449133",
+     "known": true
+    }
+   ],
+   "message": "Số tài khoản nhận lương khớp"
+  },
+  {
+   "rule_id": "R7",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "hdld",
+     "field": "ngay_ket_thuc",
+     "value": "2027-05-02",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-09-15",
+     "known": true
+    }
+   ],
+   "message": "HĐLĐ còn hiệu lực: hdld.ngay_ket_thuc=2027-05-02 ≥ don_vay.ngay_ky=2026-09-15"
+  },
+  {
+   "rule_id": "R8",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_tu",
+     "value": "2026-06-08",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_den",
+     "value": "2026-09-07",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-09-15",
+     "known": true
+    }
+   ],
+   "message": "Sao kê kết thúc 8 ngày trước ngày ký (tối đa 30); phủ đủ 3 tháng: có"
+  }
+ ],
+ "decision": {
+  "bundle_id": "dev_0002",
+  "route": "AUTO_PASS",
+  "reasons": [],
+  "rules_version": "rules-v2",
+  "thresholds_version": "thr-v1"
+ }
+}

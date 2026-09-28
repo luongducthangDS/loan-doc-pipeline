@@ -35,7 +35,7 @@ Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. K�
 
 ```bash
 pip install -r requirements.txt
-pytest -q                                            # 95 test, ~15 giây
+pytest -q                                            # 101 test, ~25 giây
 
 python -m datagen.build --seed 42                    # dev 50 + test 300 kèm ảnh -> data/synthetic/  (vài phút)
 python -m loanpipe.evaluate --split dev --extractor oracle
@@ -47,6 +47,16 @@ python -m loanpipe.evaluate --split dev --data data/synthetic-fast --no-file-che
 ```
 
 Có `make` thì dùng: `make test`, `make data SEED=42`, `make eval SPLIT=dev`, `make check`.
+
+### Demo: giao diện rà soát
+
+```bash
+streamlit run app.py
+```
+
+Hàng đợi REVIEW / REQUEST_MORE, ảnh gốc cạnh field đã trích, field bị gắn cờ tô sáng kèm lý do; người rà soát sửa field rồi chốt 1 trong 3 kết luận (lưu SQLite `data/review.sqlite`, đổi bằng `$REVIEW_DB`, có thời gian xử lý). Demo chạy trên 18 bộ dev trong `data/synthetic/samples/` với kết quả Qwen3-VL-8B đã chạy sẵn: **không gọi model, không có upload** (spec mục 10), nên deploy không cần GPU. Tạo lại bộ mẫu từ một run dev: `python -m loanpipe.review build --run reports/<run_id>`.
+
+Deploy (Streamlit Community Cloud, Render, Railway): cài `requirements.txt`, lệnh chạy `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`. SQLite nằm trên đĩa tạm của nền tảng, mất khi redeploy: đủ cho demo.
 
 **Test set đóng băng:** sinh một lần ở M1 và `datagen.build` từ chối ghi đè `test/manifest.jsonl` (trừ khi `--force`). Chỉ chạy eval trên test một lần cho mỗi phiên bản cuối; mọi việc chỉnh prompt, ngưỡng đều làm trên dev.
 

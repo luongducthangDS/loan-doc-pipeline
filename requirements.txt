@@ -3,4 +3,5 @@ pydantic==2.13.5
 pillow==12.3.0
 numpy==2.2.6
 pyyaml==6.0.3
+streamlit==1.64.0     # review UI / demo (app.py)
 pytest==9.1.1

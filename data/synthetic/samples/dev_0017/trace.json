@@ -1,0 +1,597 @@
+{
+ "bundle_id": "dev_0017",
+ "steps": {
+  "ingest_ms": 5,
+  "extract_validate_ms": 93,
+  "rules_route_ms": 0
+ },
+ "latency_ms": 141039,
+ "n_calls": 10,
+ "cost_usd": 0.0,
+ "unreadable": [],
+ "extractions": [
+  {
+   "bundle_id": "dev_0017",
+   "doc_id": "d1",
+   "doc_type": "cccd",
+   "fields": {
+    "so_cccd": {
+     "value": "079170246472",
+     "raw": "079170246472",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ho_ten": {
+     "value": "DƯƠNG DIỆU ÁNH",
+     "raw": "DƯƠNG DIỆU ÁNH",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "1970-03-28",
+     "raw": "28/03/1970",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "gioi_tinh": {
+     "value": "Nữ",
+     "raw": "Nữ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "que_quan": {
+     "value": "Phường An Hải Tây, Quận Sơn Trà, Đà Nẵng",
+     "raw": "Phường An Hải Tây, Quận Sơn Trà, Đà Nẵng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "noi_thuong_tru": {
+     "value": "Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh",
+     "raw": "Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_cap": {
+     "value": "2024-07-16",
+     "raw": "16/07/2024",
+     "confidence": "high",
+     "page": 2,
+     "error": null
+    },
+    "ngay_het_han": {
+     "value": "2030-03-28",
+     "raw": "28/03/2030",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 22066,
+   "n_calls": 4
+  },
+  {
+   "bundle_id": "dev_0017",
+   "doc_id": "d2",
+   "doc_type": "don_vay",
+   "fields": {
+    "ho_ten": {
+     "value": "DƯƠNG DIỆU ÁNH",
+     "raw": "Dương Diệu Ánh",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_cccd": {
+     "value": "079170546422",
+     "raw": "079170546422",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "1970-03-28",
+     "raw": "28/03/1970",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_dien_thoai": {
+     "value": "0512207576",
+     "raw": "0512207576",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "dia_chi": {
+     "value": "Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh",
+     "raw": "Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY TNHH PHÚ THỊNH",
+     "raw": "CÔNG TY TNHH PHÚ THỊNH",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thu_nhap_thang": {
+     "value": 29000000,
+     "raw": "29.000.000 đồng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tien_vay": {
+     "value": 420000000,
+     "raw": "420.000.000 đồng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thoi_han_thang": {
+     "value": 48,
+     "raw": "48 tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_dich": {
+     "value": "Chi phí y tế",
+     "raw": "Chi phí y tế",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk_nhan_luong": {
+     "value": "1205276960625",
+     "raw": "1205276960625",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ky": {
+     "value": "2026-03-12",
+     "raw": "Hà Nội, ngày 12 tháng 03 năm 2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 24669,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0017",
+   "doc_id": "d3",
+   "doc_type": "hdld",
+   "fields": {
+    "ho_ten_nld": {
+     "value": "DƯƠNG DIỆU ÁNH",
+     "raw": "Dương Diệu Ánh",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY TNHH PHÚ THỊNH",
+     "raw": "CÔNG TY TNHH PHÚ THỊNH",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "chuc_danh": {
+     "value": "Chuyên viên marketing",
+     "raw": "Chuyên viên marketing",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "loai_hd": {
+     "value": "khong_xac_dinh_thoi_han",
+     "raw": "Không xác định thời hạn",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_bat_dau": {
+     "value": "2019-08-07",
+     "raw": "07/08/2019",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ket_thuc": {
+     "value": null,
+     "raw": "Không xác định",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_luong": {
+     "value": 38000000,
+     "raw": "38.000.000 đồng/tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 13057,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0017",
+   "doc_id": "d4",
+   "doc_type": "sao_ke",
+   "fields": {
+    "chu_tk": {
+     "value": "DUONG DIEU ANH",
+     "raw": "DUONG DIEU ANH",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk": {
+     "value": "1205276960625",
+     "raw": "1205276960625",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ky_tu": {
+     "value": "2025-12-12",
+     "raw": "12/12/2025",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ky_den": {
+     "value": "2026-03-11",
+     "raw": "11/03/2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "giao_dich": {
+     "value": [
+      {
+       "ngay": "2025-12-12",
+       "mo_ta": "NAP TIEN DIEN THOAI",
+       "so_tien": 1532000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2025-12-17",
+       "mo_ta": "THANH TOAN QR CUA HANG TIEN LOI",
+       "so_tien": 331000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2025-12-19",
+       "mo_ta": "THANH TOAN HOA DON INTERNET",
+       "so_tien": 1993000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2025-12-25",
+       "mo_ta": "NAP TIEN DIEN THOAI",
+       "so_tien": 2276000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2025-12-27",
+       "mo_ta": "THANH TOAN QR SIEU THI",
+       "so_tien": 275000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2025-12-29",
+       "mo_ta": "THANH TOAN HOA DON DIEN",
+       "so_tien": 3412000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2025-12-31",
+       "mo_ta": "THANH TOAN HOA DON INTERNET",
+       "so_tien": 2549000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-01",
+       "mo_ta": "PHI QUAN LY TAI KHOAN",
+       "so_tien": 175000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-09",
+       "mo_ta": "SALARY 12/2025 CONG TY TNHH PHU THINH",
+       "so_tien": 33208000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-01-09",
+       "mo_ta": "THANH TOAN THE TIN DUNG",
+       "so_tien": 1246000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-17",
+       "mo_ta": "CHUYEN KHOAN TIEN NHA",
+       "so_tien": 3053000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-18",
+       "mo_ta": "THANH TOAN HOA DON INTERNET",
+       "so_tien": 3865000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-23",
+       "mo_ta": "PHI QUAN LY TAI KHOAN",
+       "so_tien": 2122000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-28",
+       "mo_ta": "NAP TIEN DIEN THOAI",
+       "so_tien": 652000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-01-31",
+       "mo_ta": "RUT TIEN ATM",
+       "so_tien": 1734000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-02-01",
+       "mo_ta": "CHUYEN KHOAN TIEN NHA",
+       "so_tien": 1445000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-02-09",
+       "mo_ta": "SALARY 01/2026 CONG TY TNHH PHU THINH",
+       "so_tien": 33113000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-03-06",
+       "mo_ta": "THANH TOAN QR CUA HANG TIEN LOI",
+       "so_tien": 3417000,
+       "loai": "ghi_no"
+      },
+      {
+       "ngay": "2026-03-09",
+       "mo_ta": "SALARY 02/2026 CONG TY TNHH PHU THINH",
+       "so_tien": 34112000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-03-09",
+       "mo_ta": "NHAN CK TU DINH MANH DUNG",
+       "so_tien": 324000,
+       "loai": "ghi_co"
+      },
+      {
+       "ngay": "2026-03-09",
+       "mo_ta": "THANH TOAN HOA DON INTERNET",
+       "so_tien": 2308000,
+       "loai": "ghi_no"
+      }
+     ],
+     "raw": "[{\"ngay\": \"12/12/2025\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"1.532.000\"}, {\"ngay\": \"17/12/2025\", \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\", \"ghi_co\": null, \"ghi_no\": \"331.000\"}, {\"ngay\": \"19/12/2025\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"1.993.000\"}, {\"ngay\": \"25/12/2025\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"2.276.000\"}, {\"ngay\": \"27/12/2025\", \"mo_ta\": \"THANH TOAN QR SIEU THI\", \"ghi_co\": null, \"ghi_no\": \"275.000\"}, {\"ngay\": \"29/12/2025\", \"mo_ta\": \"THANH TOAN HOA DON DIEN\", \"ghi_co\": null, \"ghi_no\": \"3.412.000\"}, {\"ngay\": \"31/12/2025\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"2.549.000\"}, {\"ngay\": \"01/01/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"175.000\"}, {\"ngay\": \"09/01/2026\", \"mo_ta\": \"SALARY 12/2025 CONG TY TNHH PHU THINH\", \"ghi_co\": \"33.208.000\", \"ghi_no\": null}, {\"ngay\": \"09/01/2026\", \"mo_ta\": \"THANH TOAN THE TIN DUNG\", \"ghi_co\": null, \"ghi_no\": \"1.246.000\"}, {\"ngay\": \"17/01/2026\", \"mo_ta\": \"CHUYEN KHOAN TIEN NHA\", \"ghi_co\": null, \"ghi_no\": \"3.053.000\"}, {\"ngay\": \"18/01/2026\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"3.865.000\"}, {\"ngay\": \"23/01/2026\", \"mo_ta\": \"PHI QUAN LY TAI KHOAN\", \"ghi_co\": null, \"ghi_no\": \"2.122.000\"}, {\"ngay\": \"28/01/2026\", \"mo_ta\": \"NAP TIEN DIEN THOAI\", \"ghi_co\": null, \"ghi_no\": \"652.000\"}, {\"ngay\": \"31/01/2026\", \"mo_ta\": \"RUT TIEN ATM\", \"ghi_co\": null, \"ghi_no\": \"1.734.000\"}, {\"ngay\": \"01/02/2026\", \"mo_ta\": \"CHUYEN KHOAN TIEN NHA\", \"ghi_co\": null, \"ghi_no\": \"1.445.000\"}, {\"ngay\": \"09/02/2026\", \"mo_ta\": \"SALARY 01/2026 CONG TY TNHH PHU THINH\", \"ghi_co\": \"33.113.000\", \"ghi_no\": null}, {\"ngay\": \"06/03/2026\", \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\", \"ghi_co\": null, \"ghi_no\": \"3.417.000\"}, {\"ngay\": \"09/03/2026\", \"mo_ta\": \"SALARY 02/2026 CONG TY TNHH PHU THINH\", \"ghi_co\": \"34.112.000\", \"ghi_no\": null}, {\"ngay\": \"09/03/2026\", \"mo_ta\": \"NHAN CK TU DINH MANH DUNG\", \"ghi_co\": \"324.000\", \"ghi_no\": null}, {\"ngay\": \"09/03/2026\", \"mo_ta\": \"THANH TOAN HOA DON INTERNET\", \"ghi_co\": null, \"ghi_no\": \"2.308.000\"}]",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 81242,
+   "n_calls": 2
+  }
+ ],
+ "model_outputs": {
+  "d1": "{\n  \"so_cccd\": {\"raw\": \"079170246472\", \"page\": 1},\n  \"ho_ten\": {\"raw\": \"DƯƠNG DIỆU ÁNH\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"28/03/1970\", \"page\": 1},\n  \"gioi_tinh\": {\"raw\": \"Nữ\", \"page\": 1},\n  \"que_quan\": {\"raw\": \"Phường An Hải Tây, Quận Sơn Trà, Đà Nẵng\", \"page\": 1},\n  \"noi_thuong_tru\": {\"raw\": \"Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh\", \"page\": 1},\n  \"ngay_cap\": null,\n  \"ngay_het_han\": {\"raw\": \"28/03/2030\", \"page\": 1}\n}\n---\n{\n  \"so_cccd\": null,\n  \"ho_ten\": null,\n  \"ngay_sinh\": null,\n  \"gioi_tinh\": null,\n  \"que_quan\": null,\n  \"noi_thuong_tru\": null,\n  \"ngay_cap\": {\n    \"raw\": \"16/07/2024\",\n    \"page\": 2\n  },\n  \"ngay_het_han\": null,\n  \"giao_dich\": null\n}",
+  "d2": "{\n  \"ho_ten\": {\"raw\": \"Dương Diệu Ánh\", \"page\": 1},\n  \"so_cccd\": {\"raw\": \"079170546422\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"28/03/1970\", \"page\": 1},\n  \"so_dien_thoai\": {\"raw\": \"0512207576\", \"page\": 1},\n  \"dia_chi\": {\"raw\": \"Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY TNHH PHÚ THỊNH\", \"page\": 1},\n  \"thu_nhap_thang\": {\"raw\": \"29.000.000 đồng\", \"page\": 1},\n  \"so_tien_vay\": {\"raw\": \"420.000.000 đồng\", \"page\": 1},\n  \"thoi_han_thang\": {\"raw\": \"48 tháng\", \"page\": 1},\n  \"muc_dich\": {\"raw\": \"Chi phí y tế\", \"page\": 1},\n  \"so_tk_nhan_luong\": {\"raw\": \"1205276960625\", \"page\": 1},\n  \"ngay_ky\": {\"raw\": \"Hà Nội, ngày 12 tháng 03 năm 2026\", \"page\": 1}\n}",
+  "d3": "{\n  \"ho_ten_nld\": {\"raw\": \"Dương Diệu Ánh\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY TNHH PHÚ THỊNH\", \"page\": 1},\n  \"chuc_danh\": {\"raw\": \"Chuyên viên marketing\", \"page\": 1},\n  \"loai_hd\": {\"raw\": \"Không xác định thời hạn\", \"page\": 1},\n  \"ngay_bat_dau\": {\"raw\": \"07/08/2019\", \"page\": 1},\n  \"ngay_ket_thuc\": {\"raw\": \"Không xác định\", \"page\": 1},\n  \"muc_luong\": {\"raw\": \"38.000.000 đồng/tháng\", \"page\": 1}\n}",
+  "d4": "{\n  \"chu_tk\": {\"raw\": \"DUONG DIEU ANH\", \"page\": 1},\n  \"so_tk\": {\"raw\": \"1205276960625\", \"page\": 1},\n  \"ky_tu\": {\"raw\": \"12/12/2025\", \"page\": 1},\n  \"ky_den\": {\"raw\": \"11/03/2026\", \"page\": 1},\n  \"giao_dich\": {\n    \"raw\": [\n      {\n        \"ngay\": \"12/12/2025\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.532.000\"\n      },\n      {\n        \"ngay\": \"17/12/2025\",\n        \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"331.000\"\n      },\n      {\n        \"ngay\": \"19/12/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.993.000\"\n      },\n      {\n        \"ngay\": \"25/12/2025\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.276.000\"\n      },\n      {\n        \"ngay\": \"27/12/2025\",\n        \"mo_ta\": \"THANH TOAN QR SIEU THI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"275.000\"\n      },\n      {\n        \"ngay\": \"29/12/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON DIEN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3.412.000\"\n      },\n      {\n        \"ngay\": \"31/12/2025\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.549.000\"\n      },\n      {\n        \"ngay\": \"01/01/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"175.000\"\n      },\n      {\n        \"ngay\": \"09/01/2026\",\n        \"mo_ta\": \"SALARY 12/2025 CONG TY TNHH PHU THINH\",\n        \"ghi_co\": \"33.208.000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"09/01/2026\",\n        \"mo_ta\": \"THANH TOAN THE TIN DUNG\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.246.000\"\n      },\n      {\n        \"ngay\": \"17/01/2026\",\n        \"mo_ta\": \"CHUYEN KHOAN TIEN NHA\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3.053.000\"\n      },\n      {\n        \"ngay\": \"18/01/2026\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3.865.000\"\n      },\n      {\n        \"ngay\": \"23/01/2026\",\n        \"mo_ta\": \"PHI QUAN LY TAI KHOAN\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.122.000\"\n      },\n      {\n        \"ngay\": \"28/01/2026\",\n        \"mo_ta\": \"NAP TIEN DIEN THOAI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"652.000\"\n      },\n      {\n        \"ngay\": \"31/01/2026\",\n        \"mo_ta\": \"RUT TIEN ATM\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.734.000\"\n      },\n      {\n        \"ngay\": \"01/02/2026\",\n        \"mo_ta\": \"CHUYEN KHOAN TIEN NHA\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"1.445.000\"\n      },\n      {\n        \"ngay\": \"09/02/2026\",\n        \"mo_ta\": \"SALARY 01/2026 CONG TY TNHH PHU THINH\",\n        \"ghi_co\": \"33.113.000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"06/03/2026\",\n        \"mo_ta\": \"THANH TOAN QR CUA HANG TIEN LOI\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"3.417.000\"\n      },\n      {\n        \"ngay\": \"09/03/2026\",\n        \"mo_ta\": \"SALARY 02/2026 CONG TY TNHH PHU THINH\",\n        \"ghi_co\": \"34.112.000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"09/03/2026\",\n        \"mo_ta\": \"NHAN CK TU DINH MANH DUNG\",\n        \"ghi_co\": \"324.000\",\n        \"ghi_no\": null\n      },\n      {\n        \"ngay\": \"09/03/2026\",\n        \"mo_ta\": \"THANH TOAN HOA DON INTERNET\",\n        \"ghi_co\": null,\n        \"ghi_no\": \"2.308.000\"\n      }\n    ],\n    \"page\": 1\n  }\n}"
+ },
+ "extract_errors": {},
+ "checks": [
+  {
+   "rule_id": "R0",
+   "status": "pass",
+   "evidence": [],
+   "message": "Đủ 4 giấy tờ"
+  },
+  {
+   "rule_id": "R1",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ho_ten",
+     "value": "DƯƠNG DIỆU ÁNH",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ho_ten",
+     "value": "DƯƠNG DIỆU ÁNH",
+     "known": true
+    },
+    {
+     "doc_type": "hdld",
+     "field": "ho_ten_nld",
+     "value": "DƯƠNG DIỆU ÁNH",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "chu_tk",
+     "value": "DUONG DIEU ANH",
+     "known": true
+    }
+   ],
+   "message": "Họ tên khớp"
+  },
+  {
+   "rule_id": "R2",
+   "status": "fail",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_cccd",
+     "value": "079170546422",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "so_cccd",
+     "value": "079170246472",
+     "known": true
+    }
+   ],
+   "message": "Số CCCD lệch: don_vay.so_cccd=079170546422 ≠ cccd.so_cccd=079170246472"
+  },
+  {
+   "rule_id": "R3",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_sinh",
+     "value": "1970-03-28",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ngay_sinh",
+     "value": "1970-03-28",
+     "known": true
+    }
+   ],
+   "message": "Ngày sinh khớp"
+  },
+  {
+   "rule_id": "R4",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "thu_nhap_thang",
+     "value": 29000000,
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "luong_tb_3_thang",
+     "value": 33477667,
+     "known": true
+    }
+   ],
+   "message": "Thu nhập khai 29,000,000 ≤ lương TB 33,477,667 × 1.1"
+  },
+  {
+   "rule_id": "R5",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "cccd",
+     "field": "ngay_het_han",
+     "value": "2030-03-28",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-03-12",
+     "known": true
+    }
+   ],
+   "message": "CCCD còn hạn: cccd.ngay_het_han=2030-03-28 ≥ don_vay.ngay_ky=2026-03-12"
+  },
+  {
+   "rule_id": "R6",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_tk_nhan_luong",
+     "value": "1205276960625",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "so_tk",
+     "value": "1205276960625",
+     "known": true
+    }
+   ],
+   "message": "Số tài khoản nhận lương khớp"
+  },
+  {
+   "rule_id": "R7",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "hdld",
+     "field": "loai_hd",
+     "value": "khong_xac_dinh_thoi_han",
+     "known": true
+    }
+   ],
+   "message": "HĐLĐ không xác định thời hạn"
+  },
+  {
+   "rule_id": "R8",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_tu",
+     "value": "2025-12-12",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_den",
+     "value": "2026-03-11",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-03-12",
+     "known": true
+    }
+   ],
+   "message": "Sao kê kết thúc 1 ngày trước ngày ký (tối đa 30); phủ đủ 3 tháng: có"
+  }
+ ],
+ "decision": {
+  "bundle_id": "dev_0017",
+  "route": "REVIEW",
+  "reasons": [
+   "R2"
+  ],
+  "rules_version": "rules-v2",
+  "thresholds_version": "thr-v1"
+ }
+}

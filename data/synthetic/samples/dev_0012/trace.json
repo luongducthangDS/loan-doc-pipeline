@@ -1,0 +1,434 @@
+{
+ "bundle_id": "dev_0012",
+ "steps": {
+  "ingest_ms": 6,
+  "extract_validate_ms": 15,
+  "rules_route_ms": 0
+ },
+ "latency_ms": 59047,
+ "n_calls": 8,
+ "cost_usd": 0.0,
+ "unreadable": [],
+ "extractions": [
+  {
+   "bundle_id": "dev_0012",
+   "doc_id": "d1",
+   "doc_type": "cccd",
+   "fields": {
+    "so_cccd": {
+     "value": "036091727561",
+     "raw": "036091727561",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ho_ten": {
+     "value": "HỒ QUANG ANH KIÊN",
+     "raw": "HỒ QUANG ANH KIÊN",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "1991-04-12",
+     "raw": "12/04/1991",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "gioi_tinh": {
+     "value": "Nam",
+     "raw": "Nam",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "que_quan": {
+     "value": "Phường Kim Liền, Quận Đống Đa, Hà Nội",
+     "raw": "Phường Kim Liền, Quận Đống Đa, Hà Nội",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "noi_thuong_tru": {
+     "value": "Xã Nghĩa Hưng, Huyện Nghĩa Hưng, Nam Định",
+     "raw": "Xã Nghĩa Hưng, Huyện Nghĩa Hưng, Nam Định",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_cap": {
+     "value": "2022-04-19",
+     "raw": "19/04/2022",
+     "confidence": "high",
+     "page": 2,
+     "error": null
+    },
+    "ngay_het_han": {
+     "value": "2031-04-12",
+     "raw": "12/04/2031",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 22828,
+   "n_calls": 4
+  },
+  {
+   "bundle_id": "dev_0012",
+   "doc_id": "d2",
+   "doc_type": "don_vay",
+   "fields": {
+    "ho_ten": {
+     "value": "HỒ QUANG ANH KIÊN",
+     "raw": "Hồ Quang Anh Kiên",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_cccd": {
+     "value": "036091727561",
+     "raw": "036091727561",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_sinh": {
+     "value": "1991-04-12",
+     "raw": "12/04/1991",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_dien_thoai": {
+     "value": "0801521753",
+     "raw": "0801521753",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "dia_chi": {
+     "value": "Xã Nghĩa Hưng, Huyện Nghĩa Hưng, Nam Định",
+     "raw": "Xã Nghĩa Hưng, Huyện Nghĩa Hưng, Nam Định",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY CỔ PHẦN SAO MAI",
+     "raw": "CÔNG TY CỔ PHẦN SAO MAI",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thu_nhap_thang": {
+     "value": 23200000,
+     "raw": "23.200.000 VND",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tien_vay": {
+     "value": 35000000,
+     "raw": "35.000.000 đồng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "thoi_han_thang": {
+     "value": 48,
+     "raw": "48 tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_dich": {
+     "value": "Tiêu dùng cá nhân",
+     "raw": "Tiêu dùng cá nhân",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "so_tk_nhan_luong": {
+     "value": "7047999062457",
+     "raw": "7047999062457",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ky": {
+     "value": "2026-04-08",
+     "raw": "Hà Nội, ngày 08 tháng 04 năm 2026",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 24820,
+   "n_calls": 2
+  },
+  {
+   "bundle_id": "dev_0012",
+   "doc_id": "d3",
+   "doc_type": "hdld",
+   "fields": {
+    "ho_ten_nld": {
+     "value": "HỒ QUANG ANH KIÊN",
+     "raw": "Hồ Quang Anh Kiên",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ten_cong_ty": {
+     "value": "CÔNG TY CỔ PHẦN SAO MAI",
+     "raw": "CÔNG TY CỔ PHẦN SAO MAI",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "chuc_danh": {
+     "value": "Kỹ sư phần mềm",
+     "raw": "Kỹ sư phần mềm",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "loai_hd": {
+     "value": "xac_dinh_thoi_han",
+     "raw": "Xác định thời hạn 36 tháng",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_bat_dau": {
+     "value": "2025-05-17",
+     "raw": "ngày 17 tháng 05 năm 2025",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "ngay_ket_thuc": {
+     "value": "2028-05-17",
+     "raw": "ngày 17 tháng 05 năm 2028",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    },
+    "muc_luong": {
+     "value": 26000000,
+     "raw": "26.000.000đ",
+     "confidence": "high",
+     "page": 1,
+     "error": null
+    }
+   },
+   "model": "Qwen/Qwen3-VL-8B-Instruct@a30",
+   "prompt_version": "v4",
+   "latency_ms": 11393,
+   "n_calls": 2
+  }
+ ],
+ "model_outputs": {
+  "d1": "{\n  \"so_cccd\": {\"raw\": \"036091727561\", \"page\": 1},\n  \"ho_ten\": {\"raw\": \"HỒ QUANG ANH KIÊN\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"12/04/1991\", \"page\": 1},\n  \"gioi_tinh\": {\"raw\": \"Nam\", \"page\": 1},\n  \"que_quan\": {\"raw\": \"Phường Kim Liền, Quận Đống Đa, Hà Nội\", \"page\": 1},\n  \"noi_thuong_tru\": {\"raw\": \"Xã Nghĩa Hưng, Huyện Nghĩa Hưng, Nam Định\", \"page\": 1},\n  \"ngay_cap\": null,\n  \"ngay_het_han\": {\"raw\": \"12/04/2031\", \"page\": 1}\n}\n---\n{\n  \"so_cccd\": null,\n  \"ho_ten\": null,\n  \"ngay_sinh\": null,\n  \"gioi_tinh\": null,\n  \"que_quan\": null,\n  \"noi_thuong_tru\": null,\n  \"ngay_cap\": {\"raw\": \"19/04/2022\", \"page\": 2},\n  \"ngay_het_han\": null\n}",
+  "d2": "{\n  \"ho_ten\": {\"raw\": \"Hồ Quang Anh Kiên\", \"page\": 1},\n  \"so_cccd\": {\"raw\": \"036091727561\", \"page\": 1},\n  \"ngay_sinh\": {\"raw\": \"12/04/1991\", \"page\": 1},\n  \"so_dien_thoai\": {\"raw\": \"0801521753\", \"page\": 1},\n  \"dia_chi\": {\"raw\": \"Xã Nghĩa Hưng, Huyện Nghĩa Hưng, Nam Định\", \"page\": 1},\n  \"ten_cong_ty\": {\"raw\": \"CÔNG TY CỔ PHẦN SAO MAI\", \"page\": 1},\n  \"thu_nhap_thang\": {\"raw\": \"23.200.000 VND\", \"page\": 1},\n  \"so_tien_vay\": {\"raw\": \"35.000.000 đồng\", \"page\": 1},\n  \"thoi_han_thang\": {\"raw\": \"48 tháng\", \"page\": 1},\n  \"muc_dich\": {\"raw\": \"Tiêu dùng cá nhân\", \"page\": 1},\n  \"so_tk_nhan_luong\": {\"raw\": \"7047999062457\", \"page\": 1},\n  \"ngay_ky\": {\"raw\": \"Hà Nội, ngày 08 tháng 04 năm 2026\", \"page\": 1}\n}",
+  "d3": "{\n  \"ho_ten_nld\": \"Hồ Quang Anh Kiên\",\n  \"ten_cong_ty\": \"CÔNG TY CỔ PHẦN SAO MAI\",\n  \"chuc_danh\": \"Kỹ sư phần mềm\",\n  \"loai_hd\": \"Xác định thời hạn 36 tháng\",\n  \"ngay_bat_dau\": \"ngày 17 tháng 05 năm 2025\",\n  \"ngay_ket_thuc\": \"ngày 17 tháng 05 năm 2028\",\n  \"muc_luong\": \"26.000.000đ\"\n}"
+ },
+ "extract_errors": {},
+ "checks": [
+  {
+   "rule_id": "R0",
+   "status": "fail",
+   "evidence": [
+    {
+     "doc_type": "sao_ke",
+     "missing": true
+    }
+   ],
+   "message": "Thiếu/không đọc được: sao_ke"
+  },
+  {
+   "rule_id": "R1",
+   "status": "unknown",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ho_ten",
+     "value": "HỒ QUANG ANH KIÊN",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ho_ten",
+     "value": "HỒ QUANG ANH KIÊN",
+     "known": true
+    },
+    {
+     "doc_type": "hdld",
+     "field": "ho_ten_nld",
+     "value": "HỒ QUANG ANH KIÊN",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "chu_tk",
+     "value": null,
+     "known": false
+    }
+   ],
+   "message": "Thiếu hoặc không chắc: sao_ke.chu_tk"
+  },
+  {
+   "rule_id": "R2",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_cccd",
+     "value": "036091727561",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "so_cccd",
+     "value": "036091727561",
+     "known": true
+    }
+   ],
+   "message": "Số CCCD khớp"
+  },
+  {
+   "rule_id": "R3",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_sinh",
+     "value": "1991-04-12",
+     "known": true
+    },
+    {
+     "doc_type": "cccd",
+     "field": "ngay_sinh",
+     "value": "1991-04-12",
+     "known": true
+    }
+   ],
+   "message": "Ngày sinh khớp"
+  },
+  {
+   "rule_id": "R4",
+   "status": "unknown",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "thu_nhap_thang",
+     "value": 23200000,
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "giao_dich",
+     "value": null,
+     "known": false
+    }
+   ],
+   "message": "Thiếu hoặc không chắc: sao_ke.giao_dich"
+  },
+  {
+   "rule_id": "R5",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "cccd",
+     "field": "ngay_het_han",
+     "value": "2031-04-12",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-04-08",
+     "known": true
+    }
+   ],
+   "message": "CCCD còn hạn: cccd.ngay_het_han=2031-04-12 ≥ don_vay.ngay_ky=2026-04-08"
+  },
+  {
+   "rule_id": "R6",
+   "status": "unknown",
+   "evidence": [
+    {
+     "doc_type": "don_vay",
+     "field": "so_tk_nhan_luong",
+     "value": "7047999062457",
+     "known": true
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "so_tk",
+     "value": null,
+     "known": false
+    }
+   ],
+   "message": "Thiếu hoặc không chắc: sao_ke.so_tk"
+  },
+  {
+   "rule_id": "R7",
+   "status": "pass",
+   "evidence": [
+    {
+     "doc_type": "hdld",
+     "field": "ngay_ket_thuc",
+     "value": "2028-05-17",
+     "known": true
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-04-08",
+     "known": true
+    }
+   ],
+   "message": "HĐLĐ còn hiệu lực: hdld.ngay_ket_thuc=2028-05-17 ≥ don_vay.ngay_ky=2026-04-08"
+  },
+  {
+   "rule_id": "R8",
+   "status": "unknown",
+   "evidence": [
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_tu",
+     "value": null,
+     "known": false
+    },
+    {
+     "doc_type": "sao_ke",
+     "field": "ky_den",
+     "value": null,
+     "known": false
+    },
+    {
+     "doc_type": "don_vay",
+     "field": "ngay_ky",
+     "value": "2026-04-08",
+     "known": true
+    }
+   ],
+   "message": "Thiếu hoặc không chắc: sao_ke.ky_tu, sao_ke.ky_den"
+  }
+ ],
+ "decision": {
+  "bundle_id": "dev_0012",
+  "route": "REQUEST_MORE",
+  "reasons": [
+   "R0"
+  ],
+  "rules_version": "rules-v2",
+  "thresholds_version": "thr-v1"
+ }
+}
