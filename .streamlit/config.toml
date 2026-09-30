@@ -1,2 +1,13 @@
-[theme]
-primaryColor = "#1f5fbf"  # đỏ mặc định trông như báo lỗi, không hợp màn duyệt hồ sơ
+[theme]  # back-office ngân hàng: navy + nền xám lạnh; đỏ mặc định trông như báo lỗi, không hợp màn duyệt hồ sơ
+primaryColor = "#1B3A66"
+backgroundColor = "#EEF1F5"
+secondaryBackgroundColor = "#F6F8FA"
+textColor = "#16202E"
+borderColor = "#C3CCD8"
+showWidgetBorder = true
+baseRadius = "6px"
+font = "Be Vietnam Pro:https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+
+[client]
+toolbarMode = "minimal"
