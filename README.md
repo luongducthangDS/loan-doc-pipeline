@@ -16,7 +16,7 @@ Spec đầy đủ: [`docs/spec.md`](docs/spec.md). Cách sinh dữ liệu và gi
 | M1 | Bộ sinh dữ liệu: 3 layout/loại (C held-out), lỗi E1–E8, near-miss, 3 mức augmentation, manifest | ✅ |
 | M2 | Spike trích xuất VLM, gate: field quan trọng ≥ 90% trên dev clean | ✅ gate đạt; chọn Qwen3-VL-8B (dev clean: automation 53,8% = trần, escape 0); quy trình và benchmark: [`docs/m2_eval.md`](docs/m2_eval.md) |
 | M3 | Rule R0–R8, router, trace JSON, `make eval` | ✅ phần tất định, đã kiểm bằng oracle |
-| M4 | Review UI Streamlit, chạy test đóng băng 1 lần, demo | ⏳ |
+| M4 | Review UI Streamlit, chạy test đóng băng 1 lần, demo | ✅ UI rà soát (`app.py`); ✅ test chạy 1 lần: escape 3/150 = 2,0% (cận trên 5,1%), automation 41,3%; ⏳ deploy demo public |
 
 M3 làm trước M2 có chủ đích: eval harness cần có sẵn để chấm M2, và chạy rule trên ground truth là cách duy nhất kiểm chứng nhãn của bộ sinh dữ liệu là đúng.
 
@@ -130,5 +130,6 @@ Khi đọc kết quả, xem `errors.csv` (field sai: giá trị kỳ vọng vs m
 ## Việc tiếp theo
 
 1. **M0**: phỏng vấn theo [`docs/m0_interview.md`](docs/m0_interview.md). Nếu ngân hàng đã có OCR/eKYC điền sẵn field, kể lại dự án quanh đối chiếu chéo + routing thay vì trích xuất.
-2. **M2**: chạy spike ở trên, qua gate thì phân tích lỗi theo field × layout × augmentation trên dev.
-3. Vẽ đường cong automation vs escape trên dev (có/không tự nhất quán, danh sách field quan trọng khác nhau), chọn điểm vận hành, rồi mới chạy test một lần.
+2. **Deploy demo** giao diện rà soát (Streamlit Community Cloud), gắn link vào đầu README.
+3. **Vá lỗ E1** (model "sửa" tên, xem [`docs/m2_eval.md`](docs/m2_eval.md) mục 5), làm và đo trên dev: thêm bộ E1 kiểu "tên thật gần tên phổ biến", lượt 2 tự nhất quán cho field tên dùng prompt chép từng âm tiết. Test hiện tại đã dùng 1 lần, nên phiên bản sau cần test set đóng băng mới.
+4. Quy chi phí tự host về $/bộ (giá thuê GPU/giờ × thời gian chạy).
