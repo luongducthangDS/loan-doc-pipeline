@@ -55,7 +55,7 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
     # 1. ingest
     unreadable = [d.doc_type for d in inp.docs if check_files and not is_readable(d.files)]
     steps["ingest_ms"] = _ms(t)
-    # 2. tiền xử lý: MVP chưa cần (ảnh đã là JPEG; deskew/resize thêm khi đo thấy cần ở M2)
+    # 2. tiền xử lý: nằm ở extractor vì oracle không dùng ảnh; xem loanpipe/preprocess.py (VLM_PREPROCESS=deskew)
 
     # 3 + 4. trích xuất, chuẩn hóa, confidence
     t = time.perf_counter()

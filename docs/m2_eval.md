@@ -193,4 +193,5 @@ Mỗi dòng là một lỗi thật gặp trên dev, cách sửa, và tác độn
 - **Sao kê đọc lệch hàng** (8B: `dev_0001`, `dev_0013`): số tiền của dòng ghi nợ bên cạnh dính vào dòng lương. Code từ chối vì mơ hồ (đúng), nhưng tốn automation.
 - **Latency p95 161 s/bộ với 8B** (8 bộ song song trên một GPU). Phần lớn nằm ở sao kê (output dài, 2 lượt). Hướng giảm: chạy song song các giấy tờ trong một bộ; tắt tự nhất quán chỉ khi escape dev không tăng.
 - **Chi phí tự host** chưa quy về $/bộ; cần ghi giá thuê GPU/giờ và thời gian chạy.
+- **Deskew** (`VLM_PREPROCESS=deskew`) mới đo độ chính xác góc, chưa đo tác động lên trích xuất. Cần GPU: chạy dev rồi so với run `20260928-161824`; test đóng băng không chạy lại. Trên test, field accuracy gần như không đổi theo mức ảnh (clean 98,4%, scan 99,0%, photo 98,2%), nên không kỳ vọng cải thiện lớn.
 - Dev chỉ có 25 bộ sạch: chênh 1 bộ là 4 điểm automation. Kết luận giữa hai model dựa trên chỉ số dữ liệu auto-pass (10 so với 0), không dựa trên automation.

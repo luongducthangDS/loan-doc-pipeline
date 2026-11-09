@@ -26,6 +26,7 @@ from pathlib import Path
 from PIL import Image, ImageOps
 
 from loanpipe.extract import RawExtraction
+from loanpipe.preprocess import deskew
 from loanpipe.schemas import DocType, field_kinds
 
 PROMPT_VERSION = "v4"  # v2: mỗi ảnh một lần gọi; v3: sao kê hai cột ghi_co/ghi_no; v4: không chép nhãn
@@ -92,8 +93,10 @@ def parse_output(text: str, doc_type: DocType) -> dict[str, tuple[str | None, in
     return out
 
 
-def encode_image(path: Path, variant: int) -> str:
+def encode_image(path: Path, variant: int, preprocess: bool = False) -> str:
     img = Image.open(path).convert("RGB")
+    if preprocess:
+        img = deskew(img)
     img.thumbnail((MAX_SIDE, MAX_SIDE))
     if variant == 1:  # ảnh "khác đi" cho tín hiệu tự nhất quán
         img = ImageOps.autocontrast(ImageOps.grayscale(img)).convert("RGB")
@@ -110,14 +113,14 @@ def http_post(url: str, key: str, payload: dict, timeout: int = 120) -> dict:
 
 
 class VLMExtractor:
-    prompt_version = PROMPT_VERSION
-
     def __init__(self, base_url: str, api_key: str, model: str, cache_dir: Path = Path(".cache/vlm"),
                  price_in: float = 0.0, price_out: float = 0.0,
-                 post: Callable[[str, str, dict], dict] = http_post):
+                 post: Callable[[str, str, dict], dict] = http_post, preprocess: bool = False):
         self.url = base_url.rstrip("/") + "/chat/completions"
         self.key, self.name, self.cache_dir, self.post = api_key, model, cache_dir, post
         self.price_in, self.price_out = price_in, price_out  # USD / 1 triệu token
+        self.preprocess = preprocess
+        self.prompt_version = PROMPT_VERSION + ("+deskew" if preprocess else "")  # ghi vào meta của run
 
     def extract(self, bundle_id: str, doc_id: str, doc_type: DocType, files: list[Path],
                 variant: int = 0) -> RawExtraction:
@@ -146,7 +149,9 @@ class VLMExtractor:
 
     def _extract_one(self, doc_type: DocType, f: Path, page: int, n_pages: int, variant: int) -> RawExtraction:
         prompt = build_prompt(doc_type, page, n_pages)
-        h = hashlib.sha256(f"{self.name}|{SYSTEM}|{prompt}|{variant}".encode())
+        # Khóa băm file gốc, nên ảnh đã xử lý phải có khóa riêng. Khi tắt, khóa giữ nguyên để cache cũ còn dùng được.
+        tag = "|deskew" if self.preprocess else ""
+        h = hashlib.sha256(f"{self.name}|{SYSTEM}|{prompt}|{variant}{tag}".encode())
         h.update(Path(f).read_bytes())
         cache = self.cache_dir / f"{h.hexdigest()[:32]}.json"
         if cache.exists():
@@ -157,7 +162,7 @@ class VLMExtractor:
         payload = {"model": self.name, "temperature": 0, "max_tokens": 4096, "messages": [
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": [{"type": "text", "text": prompt}] +
-             [{"type": "image_url", "image_url": {"url": encode_image(f, variant)}}]}]}
+             [{"type": "image_url", "image_url": {"url": encode_image(f, variant, self.preprocess)}}]}]}
         errors, text, cost, t0, calls = [], None, 0.0, time.perf_counter(), 0
         fields = {k: (None, None) for k in field_kinds(doc_type)}
         for _ in range(2):  # thử lại đúng 1 lần
@@ -184,6 +189,10 @@ def from_env() -> VLMExtractor:
     missing = [k for k in ("VLM_API_BASE", "VLM_API_KEY", "VLM_MODEL") if not os.environ.get(k)]
     if missing:
         raise SystemExit(f"Thiếu biến môi trường {missing}; điền vào .env (xem .env.example)")
+    mode = os.environ.get("VLM_PREPROCESS", "")
+    if mode not in ("", "deskew"):
+        raise SystemExit(f"VLM_PREPROCESS không hợp lệ: {mode!r} (để trống | deskew)")
     return VLMExtractor(os.environ["VLM_API_BASE"], os.environ["VLM_API_KEY"], os.environ["VLM_MODEL"],
+                        preprocess=mode == "deskew",
                         price_in=float(os.environ.get("VLM_PRICE_IN", 0)),
                         price_out=float(os.environ.get("VLM_PRICE_OUT", 0)))

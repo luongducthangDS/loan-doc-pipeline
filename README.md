@@ -127,6 +127,8 @@ Quy trình đầy đủ (dựng GPU, thứ tự chạy, quy tắc quyết địn
 
 Extractor `vlm` gọi API tương thích OpenAI (mặc định FPT AI Marketplace, `Qwen2.5-VL-7B-Instruct`; đổi `VLM_API_BASE` sang vLLM local nếu tự host). Mỗi lần gọi một giấy tờ; lỗi mạng hoặc output không phải JSON thì thử lại 1 lần rồi để field trống → REVIEW. Kết quả được cache trong `.cache/vlm/`, nên đổi ngưỡng rồi chạy lại eval không tốn thêm tiền.
 
+Tiền xử lý là tùy chọn: `VLM_PREPROCESS=deskew` xoay thẳng ảnh trước khi gửi (`loanpipe/preprocess.py`). Mặc định tắt; mọi số liệu đã công bố dùng ảnh gốc. Chưa đo tác động lên trích xuất, và không xử lý méo phối cảnh.
+
 ```bash
 cp .env.example .env        # điền VLM_API_KEY, giá token; ĐẶT GIỚI HẠN CHI TIÊU phía nhà cung cấp
 python -m loanpipe.evaluate --split dev --extractor vlm --augment clean --limit 5          # ước chi phí
