@@ -50,6 +50,15 @@ python -m loanpipe.evaluate --split dev --data data/synthetic-fast --no-file-che
 
 Có `make` thì dùng: `make test`, `make data SEED=42`, `make eval SPLIT=dev`, `make check`.
 
+### Quality Engineering
+
+Dự án có bộ hồ sơ QE thực hành gồm risk-based test strategy, functional/integration/regression test cases,
+kịch bản UI, truy vấn SQL kiểm tra hàng đợi review và một defect đã được tái hiện, sửa và thêm regression test:
+[`docs/quality-engineering.md`](docs/quality-engineering.md).
+
+Automation hiện dùng pytest và Streamlit AppTest; CI chạy suite này trên pull request/push. Ứng dụng chưa có
+REST API nên không tuyên bố có API/Postman coverage. Dữ liệu kiểm thử đều synthetic.
+
 ### Demo: giao diện rà soát
 
 ```bash

@@ -103,9 +103,12 @@ def close_item(con: sqlite3.Connection, bundle_id: str, reviewer: str, conclusio
                edits: dict[str, dict], note: str = "") -> None:
     if conclusion not in CONCLUSIONS:
         raise ValueError(f"kết luận không hợp lệ: {conclusion!r}")
-    con.execute("update review set status='closed', reviewer=?, conclusion=?, edits=?, note=?, closed_at=? "
-                "where bundle_id=?", (reviewer, conclusion, json.dumps(edits, ensure_ascii=False), note,
-                                       time.time(), bundle_id))
+    updated = con.execute(
+        "update review set status='closed', reviewer=?, conclusion=?, edits=?, note=?, closed_at=? "
+        "where bundle_id=?", (reviewer, conclusion, json.dumps(edits, ensure_ascii=False), note,
+                               time.time(), bundle_id))
+    if updated.rowcount != 1:
+        raise LookupError(f"review item not found: {bundle_id!r}")
     con.commit()
 
 
