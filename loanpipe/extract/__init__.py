@@ -30,8 +30,9 @@ class Extractor(Protocol):
     prompt_version: str
 
     def extract(self, bundle_id: str, doc_id: str, doc_type: DocType, files: list[Path],
-                variant: int = 0) -> RawExtraction:
-        """variant=0: ảnh gốc; variant=1: ảnh tiền xử lý khác đi (tín hiệu tự nhất quán)."""
+                variant: int = 0, method: str = "") -> RawExtraction:
+        """variant=0: ảnh gốc; variant=1: ảnh tiền xử lý khác đi (tín hiệu tự nhất quán).
+        method: cách đọc lại do agent chọn ("deskew" | "hires"); extractor không dùng ảnh thì bỏ qua."""
         ...
 
 

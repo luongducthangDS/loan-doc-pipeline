@@ -30,6 +30,7 @@ from loanpipe.preprocess import deskew
 from loanpipe.schemas import DocType, field_kinds
 
 PROMPT_VERSION = "v4"  # v2: mỗi ảnh một lần gọi; v3: sao kê hai cột ghi_co/ghi_no; v4: không chép nhãn
+HIRES_SIDE = 2400  # cách đọc "hires" của agent: chữ sao kê nhỏ
 MAX_SIDE = 1600  # ponytail: cố định; ví dụ của FPT resize 1280, nhưng chữ sao kê A4 nhỏ -> đo trên dev rồi chỉnh
 
 DOC_LABEL = {
@@ -93,11 +94,11 @@ def parse_output(text: str, doc_type: DocType) -> dict[str, tuple[str | None, in
     return out
 
 
-def encode_image(path: Path, variant: int, preprocess: bool = False) -> str:
+def encode_image(path: Path, variant: int, preprocess: bool = False, max_side: int = MAX_SIDE) -> str:
     img = Image.open(path).convert("RGB")
     if preprocess:
         img = deskew(img)
-    img.thumbnail((MAX_SIDE, MAX_SIDE))
+    img.thumbnail((max_side, max_side))
     if variant == 1:  # ảnh "khác đi" cho tín hiệu tự nhất quán
         img = ImageOps.autocontrast(ImageOps.grayscale(img)).convert("RGB")
     buf = io.BytesIO()
@@ -123,11 +124,12 @@ class VLMExtractor:
         self.prompt_version = PROMPT_VERSION + ("+deskew" if preprocess else "")  # ghi vào meta của run
 
     def extract(self, bundle_id: str, doc_id: str, doc_type: DocType, files: list[Path],
-                variant: int = 0) -> RawExtraction:
-        """Mỗi ảnh một lần gọi rồi gộp: FPT trả 400 "Invalid image URL" nếu request có >1 ảnh.
+                variant: int = 0, method: str = "") -> RawExtraction:
+        """method: "" (theo VLM_PREPROCESS) | "deskew" | "hires" (agent đọc lại bằng cách khác).
+        Mỗi ảnh một lần gọi rồi gộp: FPT trả 400 "Invalid image URL" nếu request có >1 ảnh.
         Field lấy từ ảnh đầu tiên có giá trị (page = số thứ tự ảnh, không tin page model tự khai);
         riêng giao_dich nối danh sách qua các trang sao kê."""
-        parts = [self._extract_one(doc_type, f, i, len(files), variant) for i, f in enumerate(files, 1)]
+        parts = [self._extract_one(doc_type, f, i, len(files), variant, method) for i, f in enumerate(files, 1)]
         fields = {k: (None, None) for k in field_kinds(doc_type)}
         for page, r in enumerate(parts, 1):
             for k, (raw, _) in r.fields.items():
@@ -147,10 +149,14 @@ class VLMExtractor:
                              model_output="\n---\n".join(outputs) or None,
                              errors=[e for r in parts for e in r.errors])
 
-    def _extract_one(self, doc_type: DocType, f: Path, page: int, n_pages: int, variant: int) -> RawExtraction:
+    def _extract_one(self, doc_type: DocType, f: Path, page: int, n_pages: int, variant: int,
+                     method: str = "") -> RawExtraction:
+        if method not in ("", "deskew", "hires"):
+            raise ValueError(f"method không hợp lệ: {method!r}")
         prompt = build_prompt(doc_type, page, n_pages)
+        method = method or ("deskew" if self.preprocess else "")
         # Khóa băm file gốc, nên ảnh đã xử lý phải có khóa riêng. Khi tắt, khóa giữ nguyên để cache cũ còn dùng được.
-        tag = "|deskew" if self.preprocess else ""
+        tag = f"|{method}" if method else ""
         h = hashlib.sha256(f"{self.name}|{SYSTEM}|{prompt}|{variant}{tag}".encode())
         h.update(Path(f).read_bytes())
         cache = self.cache_dir / f"{h.hexdigest()[:32]}.json"
@@ -162,7 +168,8 @@ class VLMExtractor:
         payload = {"model": self.name, "temperature": 0, "max_tokens": 4096, "messages": [
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": [{"type": "text", "text": prompt}] +
-             [{"type": "image_url", "image_url": {"url": encode_image(f, variant, self.preprocess)}}]}]}
+             [{"type": "image_url", "image_url": {"url": encode_image(
+                 f, variant, method == "deskew", HIRES_SIDE if method == "hires" else MAX_SIDE)}}]}]}
         errors, text, cost, t0, calls = [], None, 0.0, time.perf_counter(), 0
         fields = {k: (None, None) for k in field_kinds(doc_type)}
         for _ in range(2):  # thử lại đúng 1 lần

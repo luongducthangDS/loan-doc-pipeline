@@ -48,6 +48,21 @@ def _ms(t0: float) -> int:
     return round((time.perf_counter() - t0) * 1000)
 
 
+def finalize_doc(doc_type: DocType, r1, r2, rules_cfg: RulesConfig, thr: Thresholds) -> dict:
+    """Bước 4 cho một giấy tờ: raw của lượt 1 (+ lượt 2 nếu có) -> {field: Field}. Dùng chung với agent."""
+    def same_salary(a, b):  # R4 chỉ đọc lương từng tháng; lệch dòng ghi nợ giữa 2 lượt không đổi quyết định nào
+        return salary_months(a, rules_cfg) == salary_months(b, rules_cfg)
+
+    fields = {}
+    for name, kind in field_kinds(doc_type).items():
+        raw, page = r1.fields.get(name, (None, None))
+        check = r2 is not None and thr.is_critical(doc_type.value, name)
+        second = r2.fields.get(name, (None, None))[0] if check else None
+        fields[name] = finalize_field(kind, raw, page, second, check_consistency=check,
+                                      **({"same": same_salary} if kind == "transactions" else {}))
+    return fields
+
+
 def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, thr: Thresholds,
                check_files: bool = True) -> dict:
     steps: dict[str, int] = {}
@@ -64,22 +79,13 @@ def run_bundle(inp: BundleInput, extractor: Extractor, rules_cfg: RulesConfig, t
     extract_errors: dict[str, list[str]] = {}
     cost = 0.0
 
-    def same_salary(a, b):  # R4 chỉ đọc lương từng tháng; lệch dòng ghi nợ giữa 2 lượt không đổi quyết định nào
-        return salary_months(a, rules_cfg) == salary_months(b, rules_cfg)
-
     for d in inp.docs:
         if d.doc_type in unreadable:
             continue
         r1 = extractor.extract(inp.bundle_id, d.doc_id, d.doc_type, d.files, variant=0)
         r2 = (extractor.extract(inp.bundle_id, d.doc_id, d.doc_type, d.files, variant=1)
               if thr.use_self_consistency else None)
-        fields = {}
-        for name, kind in field_kinds(d.doc_type).items():
-            raw, page = r1.fields.get(name, (None, None))
-            check = r2 is not None and thr.is_critical(d.doc_type.value, name)
-            second = r2.fields.get(name, (None, None))[0] if check else None
-            fields[name] = finalize_field(kind, raw, page, second, check_consistency=check,
-                                          **({"same": same_salary} if kind == "transactions" else {}))
+        fields = finalize_doc(d.doc_type, r1, r2, rules_cfg, thr)
         runs = [r for r in (r1, r2) if r is not None]
         cost += sum(r.cost_usd for r in runs)
         model_outputs[d.doc_id] = r1.model_output

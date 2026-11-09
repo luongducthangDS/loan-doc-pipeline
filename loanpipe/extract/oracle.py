@@ -21,6 +21,6 @@ class OracleExtractor:
         self._raw = {(e["bundle_id"], d["doc_id"]): d["fields_raw"] for e in manifest for d in e["docs"]}
 
     def extract(self, bundle_id: str, doc_id: str, doc_type: DocType, files: list[Path],
-                variant: int = 0) -> RawExtraction:
+                variant: int = 0, method: str = "") -> RawExtraction:
         raw = self._raw[(bundle_id, doc_id)]
         return RawExtraction(fields={k: (v["raw"], v["page"]) for k, v in raw.items()}, n_calls=1)

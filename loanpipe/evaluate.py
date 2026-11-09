@@ -231,6 +231,15 @@ def compute_metrics(entries: list[dict], traces: dict[str, dict], thr) -> tuple[
         "cost_per_bundle_usd": statistics.mean(t["cost_usd"] for t in traces.values()) if traces else None,
         "docs_extract_failed": sum(len(t.get("extract_errors", {})) for t in traces.values()),
     }
+    if agent := [t["agent"] for t in traces.values() if "agent" in t]:
+        ops["agent"] = {
+            "llm_turns_per_bundle": statistics.mean(a["turns"] for a in agent),
+            "llm_tokens_per_bundle": statistics.mean(a["llm_tokens_in"] + a["llm_tokens_out"] for a in agent),
+            "fallback": sum(a["finished_by"] == "fallback" for a in agent),
+            "guardrail_rejections": sum(a["rejections"] for a in agent),
+            "llm_errors": sum(bool(a["error"]) for a in agent),
+            "docs_read_per_bundle": statistics.mean(len(t["extractions"]) for t in traces.values()),
+        }
     return {"extraction": extraction, "rules": rules, "end_to_end": end_to_end, "ops": ops}, errors_csv
 
 
@@ -286,6 +295,12 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
           f"- Số lần gọi model mỗi bộ: {ops['calls_per_bundle']}",
           f"- Chi phí mỗi bộ: ${ops['cost_per_bundle_usd']:.4f}",
           f"- Giấy tờ trích xuất lỗi (API/JSON, sau retry): {ops['docs_extract_failed']}", ""]
+    if ag := ops.get("agent"):
+        L += ["## Agent", "",
+              f"- Lượt gọi LLM / token mỗi bộ: {ag['llm_turns_per_bundle']:.1f} / {ag['llm_tokens_per_bundle']:.0f}",
+              f"- Giấy tờ đã đọc mỗi bộ: {ag['docs_read_per_bundle']:.2f} / 4 (dừng sớm khi đã đủ căn cứ)",
+              f"- Guardrail từ chối `finish`: {ag['guardrail_rejections']} lần",
+              f"- Hết lượt / LLM lỗi -> dùng router: {ag['fallback']} bộ ({ag['llm_errors']} do lỗi LLM)", ""]
     return "\n".join(L)
 
 
@@ -316,6 +331,8 @@ def main() -> None:
     ap.add_argument("--no-file-check", action="store_true", help="bỏ kiểm ảnh (khi sinh bằng --no-images)")
     ap.add_argument("--augment", choices=["clean", "scan", "photo"], help="chỉ chạy các bộ có mức này (gate M2: clean)")
     ap.add_argument("--limit", type=int, help="chỉ chạy N bộ đầu (spike, tiết kiệm chi phí API)")
+    ap.add_argument("--agent", action="store_true",
+                    help="LLM tự điều phối bằng tool thay cho workflow (loanpipe/agent.py); cần model có tool calling")
     ap.add_argument("--workers", type=int, default=1, help="số bộ chạy song song (VLM qua API)")
     args = ap.parse_args()
 
@@ -326,12 +343,18 @@ def main() -> None:
     kw = {"manifest": entries} if args.extractor == "oracle" else {}
     extractor = get_extractor(args.extractor, **kw)
 
-    run_id = f"{datetime.now():%Y%m%d-%H%M%S}_{args.split}_{extractor.name.replace('/', '_')}"  # HF id có "/"
+    llm = None
+    if args.agent:
+        from loanpipe.agent import from_env, run_bundle_agent
+        llm = from_env()
+    run_id = (f"{datetime.now():%Y%m%d-%H%M%S}_{args.split}_{extractor.name.replace('/', '_')}"  # HF id có "/"
+              + ("_agent" if llm else ""))
     out = args.out / run_id
     (out / "traces").mkdir(parents=True)
     def one(e: dict) -> dict:
-        t = run_bundle(bundle_input_from_manifest(e, split_dir), extractor, rules_cfg, thr,
-                       check_files=not args.no_file_check)
+        inp = bundle_input_from_manifest(e, split_dir)
+        t = (run_bundle_agent(inp, extractor, rules_cfg, thr, llm, check_files=not args.no_file_check) if llm
+             else run_bundle(inp, extractor, rules_cfg, thr, check_files=not args.no_file_check))
         (out / "traces" / f"{e['bundle_id']}.json").write_text(json.dumps(t, ensure_ascii=False, indent=1), "utf-8")
         return t
 
@@ -341,7 +364,7 @@ def main() -> None:
     metrics, errs = compute_metrics(entries, traces, thr)
     meta = {"run_id": run_id, "split": args.split, "filter": f"augment={args.augment} limit={args.limit}",
             "n_bundles": len(entries), "model": extractor.name,
-            "prompt_version": extractor.prompt_version, "rules_version": rules_cfg.version,
+            "prompt_version": extractor.prompt_version + (f"+agent:{llm.model}" if llm else ""), "rules_version": rules_cfg.version,
             "thresholds_version": thr.version, "git_commit": git_commit()}
     index = args.out / "runs.csv"
     if index.exists() and next(csv.reader(index.open(encoding="utf-8")), None) != RUNS_FIELDS:

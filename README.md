@@ -37,7 +37,7 @@ Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. K�
 
 ```bash
 pip install -r requirements.txt
-pytest -q                                            # 101 test, ~25 giây
+pytest -q                                            # 123 tests (last verified 09/11)
 
 python -m datagen.build --seed 42                    # dev 50 + test 300 kèm ảnh -> data/synthetic/  (vài phút)
 python -m loanpipe.evaluate --split dev --extractor oracle
@@ -73,7 +73,16 @@ Deploy (Streamlit Community Cloud, Render, Railway): cài `requirements.txt`, l�
 
 ## Kiến trúc
 
-Workflow tất định 6 bước. Model chỉ xuất hiện ở bước 3, vì đọc ảnh là việc duy nhất code thường không làm được.
+Hai chế độ, chấm bằng cùng một harness:
+
+- **Workflow** (mặc định): 6 bước cố định bên dưới.
+- **Agent** (`--agent`, `loanpipe/agent.py`): LLM tự lập kế hoạch qua 4 tool `list_documents`, `read_document(doc_type, method)`, `run_rules`, `finish(route, note)`. Nó tự quyết đọc giấy tờ nào, theo thứ tự nào, đọc lại bằng `deskew`/`hires` khi field mờ, và dừng sớm (thiếu giấy tờ thì REQUEST_MORE mà không gọi VLM; cặp CCCD/đơn đã lệch thì REVIEW mà không đọc sao kê). Vòng ReAct + function calling chuẩn OpenAI, `max_turns`, output guardrail trả lỗi về cho model tự sửa (mẫu của OpenAI Agents SDK / Pydantic AI), viết bằng stdlib.
+
+```
+agent:  LLM ──► list_documents ──► read_document × n (VLM, từng giấy tờ) ──► run_rules ──► finish
+         ▲                                                                                  │
+         └───────────────── kết quả tool / lý do bị guardrail từ chối ◄─────────────────────┘
+```
 
 ```
 ingest ─► tiền xử lý ─► trích xuất (VLM, từng giấy tờ) ─► validate + chuẩn hóa + confidence ─► rule R0–R8 ─► router
@@ -82,7 +91,7 @@ ingest ─► tiền xử lý ─► trích xuất (VLM, từng giấy tờ) ─
 
 | Quyết định | Lý do |
 |---|---|
-| Workflow, không dùng agent | Các bước và thứ tự đã biết trước. Agent thêm tính bất định, eval khó hơn, khó giải thích vì sao một hồ sơ bị gắn cờ. |
+| Agent điều phối, code giữ hàng rào | LLM quyết *làm gì tiếp*; *giá trị* và *quyết định an toàn* vẫn do code. Agent không đưa ra giá trị field (chỉ VLM, từng giấy tờ); đọc lại chỉ lấp chỗ trống, không phân xử bất đồng giữa các lượt đọc (lỗ E1); mỗi (giấy tờ, cách đọc) 1 lần; `finish(AUTO_PASS)` bị từ chối nếu router tất định trên dữ liệu hiện có không ra AUTO_PASS (giấy tờ chưa đọc = unknown); R0 fail chỉ được REQUEST_MORE; LLM lỗi / hết lượt thì dùng router. `tests/test_agent.py` chứng minh: policy đọc đủ cho đúng nhánh của workflow trên mọi bộ. |
 | Trích xuất **từng giấy tờ riêng** | Đưa nhiều giấy tờ vào một prompt, model có thể "sửa" tên trên đơn cho khớp CCCD và che mất sai lệch thật. `tests/test_pipeline.py` giả lập đúng failure mode này và chứng minh eval bắt được. |
 | Confidence **nhị phân** từ tín hiệu kiểm chứng được | VLM không trả xác suất đã hiệu chỉnh. `high` khi: định dạng hợp lệ + trả lời rõ ràng + 2 lần trích cho cùng kết quả. Không dùng việc khớp giữa các giấy tờ làm tín hiệu (rule đã kiểm, dùng lại là vòng tròn). |
 | `unknown` không bao giờ là `pass` | Thiếu field hoặc confidence thấp → REVIEW. Chỉ bộ qua hết mọi kiểm tra mới AUTO_PASS. |
@@ -135,6 +144,26 @@ python -m loanpipe.evaluate --split dev --extractor vlm --augment clean --limit 
 python -m loanpipe.evaluate --split dev --extractor vlm --augment clean --workers 4        # gate M2
 python -m loanpipe.evaluate --split dev --extractor vlm --workers 4                         # đủ 3 mức ảnh
 ```
+
+Agent điều tra (cần LLM hỗ trợ tool calling; mặc định dùng chung endpoint/model với VLM, đổi bằng `AGENT_API_BASE/KEY/MODEL`; vLLM: `--enable-auto-tool-choice --tool-call-parser hermes`):
+
+```bash
+python -m loanpipe.evaluate --split dev --extractor vlm --workers 4 --agent    # so escape/automation/calls với run không --agent
+```
+
+Server không bật tool parser (vd FPT AI Marketplace) thì đặt `AGENT_TOOL_MODE=json`: model trả `{"tool", "args"}` trong nội dung, wrapper đổi lại thành tool call. Lỗi 429/5xx được thử lại có chờ.
+
+**Đo lần đầu (09/11, dev 50 bộ):** VLM Qwen3-VL-8B đọc từ cache, LLM điều phối Qwen2.5-VL-7B trên FPT ở chế độ json.
+
+| | Escape | Automation | False review | Lượt VLM / bộ | Chi phí LLM / bộ | Thêm thời gian / bộ (p50) |
+|---|---|---|---|---|---|---|
+| Workflow | 0/25 | 44% | 12% | 9,96 | — | — |
+| Agent, lần 1 | 0/25 | 44% | 12% | 9,96 | $0,0087 (~11 nghìn token) | ~14 s |
+| Agent, lần 2 (`list_documents` nêu hệ quả R0) | 0/25 | 44% | 12% | 9,48 | $0,0084 | ~13 s |
+
+Nhánh trùng workflow ở cả 50 bộ, guardrail không phải từ chối lần nào. Lần 1, model 7B đi tuần tự kể cả ở 3 bộ thiếu giấy tờ (vẫn đọc nốt 3 giấy tờ còn lại). Lần 2, kết quả `list_documents` nói thẳng "R0 fail → chỉ REQUEST_MORE": cả 3 bộ chốt sau 2 lượt, 0 lần gọi VLM. 1 bộ dính 429 sau 3 lần thử lại → dùng router (đúng nhánh). Agent chưa đọc lại lần nào vì đọc lại cần GPU, lúc đo không bật; 3 bộ false review vì vậy chưa được cứu. Bước tiếp: Qwen3-VL-8B tool calling native trên GPU.
+
+Trace có thêm khối `agent`: từng tool call và kết quả, ghi chú cho người rà soát, `finished_by` (`agent` | `fallback`), `rejections` (số lần guardrail từ chối `finish`).
 
 **Gate M2:** dòng "Field quan trọng" trong `report.md` của lần chạy `--augment clean` ≥ 90%. Không đạt → đổi model (vd Qwen3-VL-8B), chưa đi tiếp. Mỗi bộ tốn khoảng 8 lần gọi (4 giấy tờ × 2 lượt tự nhất quán); đặt `use_self_consistency: false` trong `config/thresholds.yaml` để giảm một nửa, nhưng chỉ giữ nếu escape rate trên dev không tăng.
 

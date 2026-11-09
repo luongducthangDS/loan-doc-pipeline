@@ -55,3 +55,26 @@ def test_every_sample_renders(tmp_path, monkeypatch):
         at = AppTest.from_file("../app.py", default_timeout=60)
         at.query_params["bundle"] = bid
         assert not at.run().exception, bid
+
+
+def test_agent_panel(tmp_path, monkeypatch):
+    """Trace chạy --agent: hiện ghi chú, nhật ký tool call và lý do AGENT:<route> không làm vỡ trang."""
+    monkeypatch.setenv("REVIEW_DB", str(tmp_path / "r.sqlite"))
+    load = rv.load_samples
+
+    def with_agent():
+        meta, entries, traces = load()
+        t = traces["dev_0025"]
+        t["decision"]["reasons"].append("AGENT:REVIEW")
+        t["agent"] = {"turns": 3, "rejections": 1, "finished_by": "agent", "note": "Tên công ty đọc ra chữ rác.",
+                      "steps": [{"tool": "read_document", "args": {"doc_type": "don_vay"}, "result": {"fields": {}}},
+                                {"tool": "finish", "args": {"route": "AUTO_PASS"}, "result": {"error": "Chưa đủ"}},
+                                {"thought": "chuyển người xem"}]}
+        return meta, entries, traces
+    monkeypatch.setattr(rv, "load_samples", with_agent)
+    at = AppTest.from_file("../app.py", default_timeout=60)
+    at.query_params["bundle"] = "dev_0025"
+    at.run()
+    assert not at.exception
+    assert any("Tên công ty đọc ra chữ rác" in i.value for i in at.info)
+    assert any("finish(route=AUTO_PASS)" in c.value for c in at.caption)

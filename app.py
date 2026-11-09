@@ -234,6 +234,9 @@ def reason_html(reasons: list[str]) -> str:
         if not ref:  # rule fail: "R1"
             pills.append(("fail", kind))
             texts.append(RULES.get(kind, ("", kind))[1])
+        elif kind == "AGENT":  # agent chọn nhánh chặt hơn router
+            pills.append(("unknown", "AI"))
+            texts.append(f"Agent chuyển sang {ROUTE.get(ref, ('', ref))[1]}")
         elif kind == "UNKNOWN":
             pills.append(("unknown", f"{ref}?"))
             texts.append(f"Chưa kiểm được {RULES.get(ref, ('', '', ref))[2]}")
@@ -356,6 +359,27 @@ def queue_view() -> None:
                 f'<span class="mono">run {esc(meta["run_id"][:15])} · commit {esc(meta["git_commit"])}</span></div>')
 
 
+def agent_panel(ag: dict) -> None:
+    """Chế độ --agent: ghi chú của agent cho người rà soát + nhật ký tool call."""
+    if ag.get("note"):
+        st.info(f"**Agent:** {ag['note']}")
+    elif ag["finished_by"] == "fallback":
+        st.warning("Agent không chốt được (hết lượt hoặc lỗi LLM); nhánh lấy theo rule.")
+    with st.expander(f"Nhật ký agent · {ag['turns']} lượt · {len(ag['steps'])} bước"
+                     + (f" · bị từ chối {ag['rejections']} lần" if ag["rejections"] else "")):
+        for i, step in enumerate(ag["steps"], 1):
+            if "thought" in step:
+                st.caption(f"{i}. 💭 {step['thought']}")
+                continue
+            args = ", ".join(f"{k}={v}" for k, v in (step["args"] or {}).items())
+            res = step["result"]
+            brief = (res.get("error") or ("chấp nhận" if res.get("accepted") else None)
+                     or (f"router: {res['router_route']}" if "router_route" in res else None)
+                     or (f"nâng {res['upgraded']}" if res.get("upgraded") else None)
+                     or ("đã đọc" if "fields" in res else "ok"))
+            st.caption(f"{i}. `{step['tool']}({args})` → {brief}")
+
+
 def detail_view(bid: str) -> None:
     t, e = traces[bid], by_id[bid]
     dec = t["decision"]
@@ -403,6 +427,8 @@ def detail_view(bid: str) -> None:
 <i class="f" style="flex:{k['fail']}"></i><i class="u" style="flex:{k['unknown']}"></i></div>
 <div class="sum"><b class="p">{k['pass']} đạt</b> · <b class="f">{k['fail']} không đạt</b> · {k['unknown']} chưa đủ căn cứ
 </div></div>{''.join(map(rule, t['checks']))}</div>""")
+        if ag := t.get("agent"):
+            agent_panel(ag)
         with st.expander("Nhãn thật (chỉ có vì dữ liệu tổng hợp)"):
             st.write({"route đúng": e["expected_route"], "lỗi cài vào": e["injected_errors"],
                       "near-miss": e["near_miss"], "mức ảnh": e["augment"], "layout": e["layout_ids"]})
