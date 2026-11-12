@@ -1,0 +1,6 @@
+# Optional: traditional-OCR baseline for scripts/ocr_benchmark.py (not needed by the app or the VLM pipeline)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1
+torchvision==0.19.1
+easyocr==1.7.2
+rapidfuzz==3.10.1
