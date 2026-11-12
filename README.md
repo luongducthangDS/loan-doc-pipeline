@@ -67,6 +67,16 @@ streamlit run app.py
 
 Hàng đợi REVIEW / REQUEST_MORE, ảnh gốc cạnh field đã trích, field bị gắn cờ tô sáng kèm lý do; người rà soát sửa field rồi chốt 1 trong 3 kết luận (lưu SQLite `data/review.sqlite`, đổi bằng `$REVIEW_DB`, có thời gian xử lý). Demo chạy trên 18 bộ dev trong `data/synthetic/samples/` với kết quả Qwen3-VL-8B đã chạy sẵn: **không gọi model, không có upload** (spec mục 10), nên deploy không cần GPU. Tạo lại bộ mẫu từ một run dev: `python -m loanpipe.review build --run reports/<run_id>`.
 
+Docker (image có font tiếng Việt nên chạy được cả test suite; kết quả rà soát ghi vào volume):
+
+```bash
+docker build -t loan-doc-pipeline .
+docker run -p 8501:8501 -v loan-review:/data -e DEMO_PASSWORD=<mật khẩu> loan-doc-pipeline
+docker run --rm loan-doc-pipeline python -m pytest -q    # 124 test
+```
+
+`DEMO_PASSWORD` để trống thì demo mở công khai (như bản trên Streamlit Cloud); đặt giá trị thì phải nhập mật khẩu trước khi thấy hàng đợi.
+
 Deploy (Streamlit Community Cloud, Render, Railway): cài `requirements.txt`, lệnh chạy `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`. SQLite nằm trên đĩa tạm của nền tảng, mất khi redeploy: đủ cho demo.
 
 **Test set đóng băng:** sinh một lần ở M1 và `datagen.build` từ chối ghi đè `test/manifest.jsonl` (trừ khi `--force`). Chỉ chạy eval trên test một lần cho mỗi phiên bản cuối; mọi việc chỉnh prompt, ngưỡng đều làm trên dev.

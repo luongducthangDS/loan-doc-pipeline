@@ -78,3 +78,15 @@ def test_agent_panel(tmp_path, monkeypatch):
     assert not at.exception
     assert any("Tên công ty đọc ra chữ rác" in i.value for i in at.info)
     assert any("finish(route=AUTO_PASS)" in c.value for c in at.caption)
+
+
+def test_password_gate(tmp_path, monkeypatch):
+    """DEMO_PASSWORD đặt -> chưa nhập đúng thì không lộ hàng đợi; nhập đúng thì vào."""
+    monkeypatch.setenv("REVIEW_DB", str(tmp_path / "r.sqlite"))
+    monkeypatch.setenv("DEMO_PASSWORD", "s3cret")
+    at = AppTest.from_file("../app.py", default_timeout=60).run()
+    assert "?bundle=" not in html(at)
+    at.text_input[0].input("sai").run()
+    assert at.error and "?bundle=" not in html(at)
+    at.text_input[0].input("s3cret").run()
+    assert not at.exception and "?bundle=dev_0025" in html(at)

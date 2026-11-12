@@ -1,0 +1,13 @@
+.git
+.venv
+.cache
+.claude
+.env
+reports
+**/__pycache__
+**/.pytest_cache
+data/*
+!data/synthetic
+data/synthetic/*
+!data/synthetic/samples
+gemini.md

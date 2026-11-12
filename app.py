@@ -8,7 +8,9 @@ Demo public: chỉ bộ mẫu synthetic có sẵn, KHÔNG upload, KHÔNG gọi m
 
 from __future__ import annotations
 
+import hmac
 import json
+import os
 import re
 import time
 from collections import Counter
@@ -291,6 +293,15 @@ def flagged_fields(trace: dict) -> dict[tuple[str, str], dict]:
 # --- Khung trang --------------------------------------------------------------------------------
 st.set_page_config(page_title="Thẩm định hồ sơ vay", page_icon="📄", layout="wide",
                    initial_sidebar_state="collapsed")
+# ponytail: một mật khẩu chung cho cả demo; triển khai thật dùng SSO (st.login/OIDC) và phân quyền theo người duyệt
+if (pw := os.environ.get("DEMO_PASSWORD")) and not st.session_state.get("authed"):
+    entered = st.text_input("Mật khẩu", type="password")
+    if entered and hmac.compare_digest(entered, pw):
+        st.session_state["authed"] = True
+        st.rerun()
+    if entered:
+        st.error("Sai mật khẩu")
+    st.stop()
 meta, entries, traces = st.cache_data(rv.load_samples)()
 con = st.cache_resource(rv.connect)()
 by_id = {e["bundle_id"]: e for e in entries}
