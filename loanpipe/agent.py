@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import time
 import urllib.error
 from collections.abc import Callable
@@ -348,8 +349,20 @@ def from_env() -> Callable[[list, list], dict]:
     if mode not in ("native", "json"):
         raise SystemExit(f"AGENT_TOOL_MODE không hợp lệ: {mode!r} (native | json)")
 
+    # Giới hạn lượt/phút phía client (vd Gemini free 15 RPM), dùng chung mọi worker.
+    # ponytail: một khoá toàn cục, đủ cho 1 key; nhiều key/endpoint thì mỗi cái một khoá
+    rpm = float(os.environ.get("AGENT_RPM") or 0)
+    gap = 60 / rpm if rpm > 0 else 0.0
+    lock, last = threading.Lock(), [0.0]
+
+    def throttle() -> None:
+        with lock:
+            time.sleep(max(0.0, last[0] + gap - time.monotonic()))
+            last[0] = time.monotonic()
+
     def post(payload: dict) -> dict:
-        for wait in (2, 5, 15, None):  # 429 / 5xx: chờ rồi thử lại; lỗi khác hoặc hết lượt -> ném ra (agent fallback)
+        for wait in (2, 4, 8, 16, 32, 60, None):  # 429 / 5xx: backoff luỹ thừa; lỗi khác/hết lượt -> ném ra (fallback)
+            throttle()
             try:
                 return http_post(url, key, payload)
             except urllib.error.HTTPError as e:

@@ -170,3 +170,23 @@ def test_list_documents_states_r0_consequence(manifest):
     e = next(e for e in manifest if len(e["docs"]) < 4)
     t = run(manifest, e, scripted(call("list_documents")))
     assert "REQUEST_MORE" in t["agent"]["steps"][0]["result"]["hint"]
+
+
+def test_from_env_throttles_and_parses_native_tool_calls(monkeypatch):
+    """AGENT_RPM giãn các lượt gọi; message trả về giữ nguyên field lạ (vd thought signature của Gemini)."""
+    import time
+
+    from loanpipe import agent
+    from loanpipe.extract import vlm
+    for k, v in {"AGENT_API_BASE": "http://x/v1", "AGENT_API_KEY": "k", "AGENT_MODEL": "gemini-test",
+                 "AGENT_TOOL_MODE": "native", "AGENT_RPM": "600"}.items():
+        monkeypatch.setenv(k, v)
+    reply = {"choices": [{"message": {**call("list_documents"), "extra_content": {"google": {"thought_signature": "s"}}}}],
+             "usage": {"prompt_tokens": 10, "completion_tokens": 2}}
+    monkeypatch.setattr(vlm, "http_post", lambda url, key, payload: reply)
+    llm = agent.from_env()
+    t0 = time.monotonic()
+    a, b = llm([], agent.TOOLS), llm([], agent.TOOLS)
+    assert time.monotonic() - t0 >= 0.09  # 600 RPM -> cách nhau >= 0.1 s
+    assert a["tool_calls"][0]["function"]["name"] == "list_documents" and "extra_content" in b
+    assert a["_usage"]["prompt_tokens"] == 10 and llm.model == "gemini-test"
