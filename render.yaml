@@ -1,5 +1,6 @@
 # Render Blueprint: review UI demo (Dockerfile). Gói free ngủ sau ~15 phút không truy cập, lần mở đầu chờ ~1 phút.
-# Kết quả rà soát ghi SQLite trong container, mất khi redeploy/ngủ: chấp nhận cho demo.
+# Kết quả rà soát ghi SQLite /data/review.sqlite (ENV trong Dockerfile) trong container, mất khi redeploy/ngủ: chấp
+# nhận cho demo. Tạo bằng CLI từ Git Bash: đặt MSYS_NO_PATHCONV=1, nếu không "/_stcore/health" bị đổi thành đường dẫn Windows.
 services:
   - type: web
     name: loan-doc-pipeline
@@ -8,6 +9,3 @@ services:
     region: singapore
     branch: agent-mode
     healthCheckPath: /_stcore/health
-    envVars:
-      - key: REVIEW_DB
-        value: /tmp/review.sqlite
