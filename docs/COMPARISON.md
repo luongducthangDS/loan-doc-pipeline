@@ -1,10 +1,12 @@
 <!-- Bản chụp của reports/comparison.md (reports/ không commit). Sinh lại: make compare SPLIT=dev, rồi chép sang đây. -->
 
+> B5 (agent): VLM Qwen3-VL-8B đọc từ cache, LLM điều phối là pool Gemini free (chủ yếu `gemini-3.1-flash-lite` / `gemini-3.5-flash-lite`). Field acc của B5 thấp vì giấy tờ agent không đọc (dừng sớm) bị tính sai.
+
 # So sánh biến thể — `dev`
 
 - Bộ lọc: `augment=None limit=None`; rules: `rules-v2/thr-v1`
 - Baseline paired: `20260928-164923_dev_Qwen_Qwen3-VL-8B-Instruct@a30`
-- Nguồn: 12 run khớp, gộp còn 5 biến thể (giữ run mới nhất mỗi cấu hình).
+- Nguồn: 13 run khớp, gộp còn 6 biến thể (giữ run mới nhất mỗi cấu hình).
 
 - Bỏ qua 8 run khác rules/thresholds (mặc định chỉ so trên `rules-v2/thr-v1`, dùng `--rules all` để xem tất cả).
 - Run cũ không ghi `self_consistency`/`preprocess`; giá trị suy ra từ thresholds được đánh dấu ≈, còn lại là `?`.
@@ -22,6 +24,7 @@
 | B3 | B3 Qwen/Qwen2.5-VL-7B-Instruct · workflow, 2 lượt≈ | 50 | `rules-v2/thr-v1` | 0.0% | 11.3% | 46.0% | 8.0% | 98.5% | 99.0% | 9.96 | $0.0000 | $0.0000 | 136435 | `20260928-111029_dev_Qwen_Qwen2.5-VL-7B-Instruct (+2)` |
 | B3 | B3 Qwen/Qwen3-VL-8B-Instruct · workflow, 2 lượt≈ | 50 | `rules-v2/thr-v1` | 0.0% | 11.3% | 44.0% | 12.0% | 99.4% | 99.3% | 9.96 | $0.0000 | $0.0000 | 161133 | `20260928-111031_dev_Qwen_Qwen3-VL-8B-Instruct (+2)` |
 | B3 | B3 Qwen/Qwen3-VL-8B-Instruct@a30 · workflow, 2 lượt≈ | 50 | `rules-v2/thr-v1` | 0.0% | 11.3% | 44.0% | 12.0% | 99.3% | 99.3% | 9.96 | $0.0000 | $0.0000 | 217338 | `20260928-164923_dev_Qwen_Qwen3-VL-8B-Instruct@a30 (+1)` |
+| B5 | B5 Qwen/Qwen3-VL-8B-Instruct@a30 · agent, 2 lượt | 50 | `rules-v2/thr-v1` | 0.0% | 11.3% | 44.0% | 12.0% | 88.2% | 89.3% | 8.96 | $0.0000 | $0.0000 | 314678 | `20261113-183216_dev_Qwen_Qwen3-VL-8B-Instruct@a30_agent` |
 
 Không tính lại metric: mọi số đọc từ `metrics.json` của run gốc. `$/auto-pass` = `$/bộ ÷ automation rate`.
 
@@ -34,6 +37,7 @@ Không tính lại metric: mọi số đọc từ `metrics.json` của run gốc
 | B3 Qwen/Qwen2.5-VL-7B-Instruct · workflow, 2 lượt≈ | 99.4% | 98.3% | 96.6% |
 | B3 Qwen/Qwen3-VL-8B-Instruct · workflow, 2 lượt≈ | 99.8% | 99.5% | 98.3% |
 | B3 Qwen/Qwen3-VL-8B-Instruct@a30 · workflow, 2 lượt≈ | 99.8% | 99.5% | 98.0% |
+| B5 Qwen/Qwen3-VL-8B-Instruct@a30 · agent, 2 lượt | 89.8% | 90.5% | 81.8% |
 
 ## So với baseline (cùng bộ)
 
@@ -43,6 +47,7 @@ Không tính lại metric: mọi số đọc từ `metrics.json` của run gốc
 | B1 ocr · workflow, EasyOCR + anchor (CPU, đọc lại không độc lập) | 50 | 32 | 0 | 18 | 0→0 | 3→21 | AP→RV 18 |
 | B3 Qwen/Qwen2.5-VL-7B-Instruct · workflow, 2 lượt≈ | 50 | 45 | 3 | 2 | 0→0 | 3→2 | RV→AP 3; AP→RV 2 |
 | B3 Qwen/Qwen3-VL-8B-Instruct · workflow, 2 lượt≈ | 50 | 50 | 0 | 0 | 0→0 | 3→3 | — |
+| B5 Qwen/Qwen3-VL-8B-Instruct@a30 · agent, 2 lượt | 50 | 50 | 0 | 0 | 0→0 | 3→3 | — |
 
 - **Sửa**: baseline sai route, variant đúng. **Làm hỏng**: baseline đúng, variant sai.
 - Escape/False review đếm trên các bộ chung có `expected_route` trong manifest.

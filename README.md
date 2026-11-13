@@ -215,10 +215,13 @@ Server không bật tool parser (vd FPT AI Marketplace) thì đặt `AGENT_TOOL_
 | Workflow | 0/25 | 44% | 12% | 9,96 | — | — |
 | Agent, lần 1 | 0/25 | 44% | 12% | 9,96 | $0,0087 (~11 nghìn token) | ~14 s |
 | Agent, lần 2 (`list_documents` nêu hệ quả R0) | 0/25 | 44% | 12% | 9,48 | $0,0084 | ~13 s |
+| Agent B5b, Gemini Flash Lite (13/11) | 0/25 | 44% | 12% | 8,96 | $0 (gói free, ~13 nghìn token) | ~48 s* |
 
 Nhánh trùng workflow ở cả 50 bộ, guardrail không phải từ chối lần nào. Lần 1, model 7B đi tuần tự kể cả ở 3 bộ thiếu giấy tờ (vẫn đọc nốt 3 giấy tờ còn lại). Lần 2, kết quả `list_documents` nói thẳng "R0 fail → chỉ REQUEST_MORE": cả 3 bộ chốt sau 2 lượt, 0 lần gọi VLM. 1 bộ dính 429 sau 3 lần thử lại → dùng router (đúng nhánh). Agent chưa đọc lại lần nào vì đọc lại cần GPU, lúc đo không bật; 3 bộ false review vì vậy chưa được cứu. Bước tiếp: Qwen3-VL-8B tool calling native trên GPU.
 
-Trace có thêm khối `agent`: từng tool call và kết quả, ghi chú cho người rà soát, `finished_by` (`agent` | `fallback`), `rejections` (số lần guardrail từ chối `finish`).
+**Đo lần ba (13/11, B5b):** cùng cache VLM, LLM điều phối là pool Gemini free (`AGENT_MODEL=tên:rpm:rpd,...`, tool calling native): 28 bộ `gemini-3.1-flash-lite`, 12 bộ `gemini-3.5-flash-lite`, 4 bộ `gemini-3-flash-preview`, 3 bộ `gemini-3.6-flash`. Nhánh trùng workflow ở cả 50 bộ, guardrail không từ chối lần nào, 0 lần LLM lỗi. 3 bộ thiếu giấy tờ được code chốt trước LLM (0 lượt LLM, 0 lượt VLM); 8 bộ agent chốt REVIEW sau khi đọc 2 giấy tờ. Gemini gọi nhiều tool trong một lượt (đọc 4 giấy tờ song song) nên chỉ 4,6 lượt LLM/bộ. Field acc của run là 88,2 % chỉ vì giấy tờ không đọc bị tính sai, không phải đọc sai. 2 lần đọc lại `hires` lỗi vì GPU tắt nên 3 bộ false review vẫn chưa được cứu. *Thời gian gồm chờ hạn mức 15 RPM, không phải độ trễ model.
+
+Trace có thêm khối `agent`: từng tool call và kết quả, ghi chú cho người rà soát, `finished_by` (`agent` | `guardrail` | `fallback`), `rejections` (số lần guardrail từ chối `finish`), `models` (model đã trả lời bộ đó).
 
 **Gate M2:** dòng "Field quan trọng" trong `report.md` của lần chạy `--augment clean` ≥ 90%. Không đạt → đổi model (vd Qwen3-VL-8B), chưa đi tiếp. Mỗi bộ tốn khoảng 8 lần gọi (4 giấy tờ × 2 lượt tự nhất quán); đặt `use_self_consistency: false` trong `config/thresholds.yaml` để giảm một nửa, nhưng chỉ giữ nếu escape rate trên dev không tăng.
 

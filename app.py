@@ -593,6 +593,7 @@ RESULTS = [  # (biến thể, escape, cận trên 95 %, automation, false review
     ("Qwen3-VL-8B · 2 lượt tự nhất quán (chọn)", "0,0 %", "11,3 %", "44,0 %", "12,0 %", "99,4 %", True),
     ("Qwen2.5-VL-7B · 2 lượt", "0,0 %", "11,3 %", "46,0 %", "8,0 %", "98,5 %", False),
     ("EasyOCR + anchor (CPU, không VLM)", "0,0 %", "11,3 %", "8,0 %", "84,0 %", "72,3 %", False),
+    ("Agent: Gemini Flash Lite điều phối + Qwen3-VL (đọc 3,44/4 giấy tờ)", "0,0 %", "11,3 %", "44,0 %", "12,0 %", "88,2 %", False),
 ]
 
 

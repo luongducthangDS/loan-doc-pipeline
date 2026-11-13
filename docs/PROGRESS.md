@@ -24,7 +24,7 @@
 
 ## Agent B5b offline (2026-11-13)
 - R0 fail (thiếu giấy tờ/file hỏng) giờ được code chốt REQUEST_MORE trước vòng LLM: 0 lượt LLM, 0 lượt VLM, `finished_by="guardrail"`; báo cáo eval có dòng "Chốt REQUEST_MORE bằng code trước LLM". Trước đó prompt b5b-v1 đã nói vậy nhưng code chưa làm.
-- Chưa đo lại bằng LLM thật (cần duyệt chi phí FPT).
+- Đo bằng pool Gemini free (13/11, run `20261113-183216_dev_..._agent`): nhánh trùng workflow 50/50, escape 0/25, automation 44 %, false review 12 %, 0 lỗi LLM, 0 lần guardrail từ chối; 3 bộ chốt trước LLM, 8 bộ REVIEW sau 2 giấy tờ; VLM 8,96 lượt/bộ (workflow 9,96), LLM 4,6 lượt / ~13k token mỗi bộ. 2 lần đọc lại `hires` lỗi vì GPU tắt.
 
 ## Vấn đề mở
 - GPU không vào được từ 09/11; khoá FPT chỉ có Qwen2.5-VL-7B và server không bật tool calling native.
