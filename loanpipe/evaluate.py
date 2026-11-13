@@ -14,11 +14,13 @@ import csv
 import functools
 import json
 import math
+import os
 import statistics
 import subprocess
 import sys
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -259,7 +261,7 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
           f"auto-pass); cận trên 95%: **{_pct(e2e['escape_rate_upper95'])}**",
           f"- **Automation rate**: {_pct(e2e['automation_rate'])}",
           f"- **False review rate**: {_pct(e2e['false_review_rate'])} (bộ sạch bị đẩy sang review)",
-          "- Baseline B0 (mọi bộ vào REVIEW): automation 0%, escape 0%.", "",
+          "- Mốc thủ công (mọi bộ vào REVIEW): automation 0%, escape 0%. Oracle B0 là cận trên riêng.", "",
           "| expected \\ actual | " + " | ".join(ROUTES) + " |", "|---|" + "---|" * len(ROUTES)]
     L += [f"| {a} | " + " | ".join(str(e2e["confusion"][a][b]) for b in ROUTES) + " |" for a in ROUTES]
     if prev:
@@ -340,6 +342,8 @@ def main() -> None:
     entries = [json.loads(line) for line in (split_dir / "manifest.jsonl").read_text("utf-8").splitlines()]
     entries = [e for e in entries if not args.augment or e["augment"] == args.augment][:args.limit]
     rules_cfg, thr = load_rules(), load_thresholds()
+    if args.extractor == "ocr":
+        thr = replace(thr, use_self_consistency=False)
     kw = {"manifest": entries} if args.extractor == "oracle" else {}
     extractor = get_extractor(args.extractor, **kw)
 
@@ -365,7 +369,11 @@ def main() -> None:
     meta = {"run_id": run_id, "split": args.split, "filter": f"augment={args.augment} limit={args.limit}",
             "n_bundles": len(entries), "model": extractor.name,
             "prompt_version": extractor.prompt_version + (f"+agent:{llm.model}" if llm else ""), "rules_version": rules_cfg.version,
-            "thresholds_version": thr.version, "git_commit": git_commit()}
+            "thresholds_version": thr.version, "git_commit": git_commit(),
+            "orchestration": "agent" if llm else "workflow",
+            "self_consistency": thr.use_self_consistency,
+            "preprocess": (os.environ.get("VLM_PREPROCESS") or "off") if args.extractor == "vlm" else "n/a",
+            "data": str(args.data)}
     index = args.out / "runs.csv"
     if index.exists() and next(csv.reader(index.open(encoding="utf-8")), None) != RUNS_FIELDS:
         index.replace(index.with_name("runs_legacy.csv"))  # header cũ lệch cột: cất đi, bắt đầu bảng mới
@@ -385,7 +393,8 @@ def main() -> None:
         w.writeheader()
         w.writerows(errs)
     e2e, ext, ops = metrics["end_to_end"], metrics["extraction"], metrics["ops"]
-    row = {**meta, "escape_rate": e2e["escape_rate"], "escape_upper95": round(e2e["escape_rate_upper95"], 4),
+    row = {k: meta[k] for k in RUNS_FIELDS if k in meta}
+    row |= {"escape_rate": e2e["escape_rate"], "escape_upper95": round(e2e["escape_rate_upper95"], 4),
            "automation_rate": e2e["automation_rate"], "false_review_rate": e2e["false_review_rate"],
            "field_accuracy": ext["field_accuracy"]["acc"],
            "critical_field_accuracy": ext["critical_field_accuracy"]["acc"],

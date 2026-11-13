@@ -4,7 +4,7 @@ SEED ?= 42
 SPLIT ?= dev
 EXTRACTOR ?= oracle
 
-.PHONY: install test data data-fast eval eval-fast spike check
+.PHONY: install test data data-fast eval eval-fast compare spike check
 
 install:
 	$(PY) -m pip install -r requirements.txt
@@ -23,6 +23,9 @@ eval:            ## -> reports/<run_id>/report.md, metrics.json, errors.csv
 
 eval-fast:
 	$(PY) -m loanpipe.evaluate --split $(SPLIT) --extractor $(EXTRACTOR) --data data/synthetic-fast --no-file-check
+
+compare:         ## so sánh biến thể từ reports/<run_id>/metrics.json -> reports/comparison.md
+	$(PY) -m loanpipe.compare --split $(SPLIT)
 
 spike:           ## gate M2: VLM trên dev clean (cần .env). Chạy LIMIT=5 trước để ước chi phí
 	$(PY) -m loanpipe.evaluate --split dev --extractor vlm --augment clean --workers 4 $(if $(LIMIT),--limit $(LIMIT))

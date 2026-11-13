@@ -53,4 +53,7 @@ def get_extractor(name: str, **kw) -> Extractor:
         from loanpipe.extract.vlm import from_env
         load_dotenv()
         return from_env()
-    raise ValueError(f"extractor không có: {name!r} (oracle | vlm)")
+    if name == "ocr":
+        from loanpipe.extract.ocr import OCRExtractor
+        return OCRExtractor(**kw)
+    raise ValueError(f"extractor không có: {name!r} (oracle | vlm | ocr)")

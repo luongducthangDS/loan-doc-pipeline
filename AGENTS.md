@@ -8,6 +8,7 @@ Pipeline hồ sơ vay tiêu dùng: VLM trích xuất 4 giấy tờ → rule tấ
 - Nhánh `agent-mode` đã push lên `origin/agent-mode`, chưa merge vào `main`. Gồm QE `0d74c37`, deskew `9163fbf`, agent `2ee4eb3`.
 - Test đóng băng: escape 2,0 %, automation 41,3 %; agent mode đo trên dev, chưa đọc lại được vì GPU tắt. Chi tiết ở `docs/PROGRESS.md`.
 - Demo Render (13/11): https://loan-doc-pipeline.onrender.com, deploy từ `agent-mode` qua `render.yaml`/Dockerfile (`$PORT`). Đây là demo duy nhất (đã bỏ bản Streamlit Cloud 13/11).
+- B1 OCR (EasyOCR + anchor, `--extractor ocr`, cần `requirements-ocr.txt`) đã commit: dev escape 0/25, automation 8 %, field acc 72,3 %. Bảng so sánh xem được trên GitHub ở `docs/COMPARISON.md` (chép tay từ `reports/`, bị gitignore).
 - Việc tiếp theo: mục đầu tiên chưa tick trong `docs/TASKS.md` (cần GPU).
 
 ## Gotchas

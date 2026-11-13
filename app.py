@@ -631,7 +631,8 @@ xem ảnh gốc cạnh trường đã trích, sửa và chốt.</p>
 <div class="twrap"><table class="tbl"><thead><tr><th>Biến thể</th><th class="n">Escape</th><th class="n">Cận trên 95 %</th>
 <th class="n">Automation</th><th class="n">False review</th><th class="n">Field acc</th></tr></thead><tbody>{rows}</tbody></table></div>
 <div class="foot">Escape 0 trên dev chưa đủ kết luận an toàn (chỉ 25 bộ có lỗi), nên luôn báo kèm cận trên 95 %. Test set
-150 bộ chỉ chạy một lần với cấu hình đã chọn. Demo đọc kết quả đã chạy sẵn: không upload, không gọi model.</div>""")
+150 bộ chỉ chạy một lần với cấu hình đã chọn. Demo đọc kết quả đã chạy sẵn: không upload, không gọi model. Bảng đầy đủ (theo mức ảnh, paired diff route):
+<a href="https://github.com/luongducthangDS/loan-doc-pipeline/blob/agent-mode/docs/COMPARISON.md" target="_blank" rel="noopener">docs/COMPARISON.md</a>.</div>""")
 
 
 bid = st.query_params.get("bundle")

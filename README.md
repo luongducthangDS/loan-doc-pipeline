@@ -57,18 +57,20 @@ Recall mọi mã lỗi E1–E8 = 100%, không near-miss nào bị gắn cờ. K�
 
 ```bash
 pip install -r requirements.txt
-pytest -q                                            # 123 tests (last verified 09/11)
+pytest -q                                            # 127 tests (last verified 13/11)
 
 python -m datagen.build --seed 42                    # dev 50 + test 300 kèm ảnh -> data/synthetic/  (vài phút)
 python -m loanpipe.evaluate --split dev --extractor oracle
 #   -> reports/<run_id>/report.md, metrics.json, errors.csv, traces/*.json; reports/runs.csv
+python -m loanpipe.compare --split dev
+#   -> reports/comparison.md, comparison.csv: gộp biến thể, paired diff route so với baseline
 
 # Nhanh, không vẽ ảnh (CI dùng cách này):
 python -m datagen.build --seed 42 --no-images --out data/synthetic-fast
 python -m loanpipe.evaluate --split dev --data data/synthetic-fast --no-file-check
 ```
 
-Có `make` thì dùng: `make test`, `make data SEED=42`, `make eval SPLIT=dev`, `make check`.
+Có `make` thì dùng: `make test`, `make data SEED=42`, `make eval SPLIT=dev`, `make compare SPLIT=dev`, `make check`.
 
 ### Quality Engineering
 
@@ -147,7 +149,8 @@ loanpipe/
   router.py       # 3 nhánh, theo thứ tự spec mục 8
   pipeline.py     # workflow 6 bước + trace JSON
   evaluate.py     # eval 3 tầng, report.md / metrics.json / errors.csv, so với run trước
-  extract/        # giao diện Extractor, oracle (cận trên), vlm (API tương thích OpenAI)
+  compare.py      # bảng so sánh biến thể (gộp run, paired diff route), reports/comparison.md
+  extract/        # Extractor: oracle (cận trên), ocr (EasyOCR + anchor), vlm (API tương thích OpenAI)
 config/
   rules.yaml      # tolerance, regex giao dịch lương      (rules_version)
   thresholds.yaml # field quan trọng, tự nhất quán       (thresholds_version)
@@ -158,6 +161,28 @@ datagen/
   build.py        # CLI, chia dev/test, manifest.jsonl, đóng băng test
 scripts/check_data_paths.py   # CI chặn ảnh/PDF ngoài data/synthetic/
 docs/spec.md, docs/data_card.md
+```
+
+## B1: baseline OCR truyền thống
+
+Extractor `ocr` là cực "không LLM" của trục so sánh: EasyOCR (vi+en, CPU) + neo theo mẫu giấy tờ + parser bảng sao kê dùng toạ độ cột. Không có model sinh, không gọi API. Kết quả là dòng **B1** trong [`docs/COMPARISON.md`](docs/COMPARISON.md) (bản chụp của `reports/comparison.md`), đặt cạnh B0 oracle và B3 VLM.
+
+| Dev 50 bộ | Escape (cận trên 95 %) | Automation | False review | Field acc |
+|---|---|---|---|---|
+| B1 EasyOCR + anchor | 0/25 (11,3 %) | 8 % | 84 % | 72,3 % |
+| B3 Qwen3-VL-8B | 0/25 (11,3 %) | 44 % | 12 % | 99,4 % |
+
+Cả hai không để lọt bộ sai nào, vì router đẩy mọi thứ chưa chắc sang người rà soát. Cái giá của OCR nằm ở automation: 18 bộ VLM tự duyệt đúng thì OCR đẩy sang REVIEW, chủ yếu do sao kê (parse được 17/48, dấu +/- và dấu tiếng Việt bị mất).
+
+- Đọc theo **box**: gom dòng cùng hàng (ảnh photo làm đảo thứ tự detector), nối giá trị bị wrap theo cột.
+- Sao kê layout A không có dấu +/-: hướng ghi có/ghi nợ suy từ tâm cột tiêu đề, nên cần box; thiếu box thì chỉ đọc được layout B.
+- Evaluator chạy OCR **một lượt** (`self_consistency=False`), không thay file thresholds; đọc lại cùng ảnh chỉ lặp lại cùng kết quả, không phải bằng chứng độc lập.
+- Không tinh chỉnh cho layout C (chỉ có ở test): baseline truyền thống cần mẫu, đó chính là điểm cần so.
+- Cache: `.cache/ocr/<sha1>.json` (text, `detail=0`) và `.cache/ocr_boxes/<sha1>.json` (`detail=1`: box + text + conf + latency_ms). Xoá cache nếu đổi tham số OCR.
+
+```bash
+python -m loanpipe.evaluate --split dev --extractor ocr          # không tốn tiền API, nhưng nặng CPU (~20 s/ảnh lần đầu)
+python -m loanpipe.compare --split dev                          # thêm dòng B1 cạnh B0/B2/B3/B5
 ```
 
 ## M2: chạy spike VLM

@@ -8,7 +8,7 @@ Python · Pydantic · pdf2image + OpenCV (tiền xử lý, deskew tuỳ chọn) 
 ## Thư mục
 ```
 datagen/      sinh hồ sơ synthetic: render, profiles, truth, augment, build (3 layout/loại, layout C held-out, lỗi E1–E8, near-miss)
-loanpipe/extract/{oracle,vlm}.py   oracle trả đúng chuỗi đã in (đo phần tất định); vlm gọi model, cache theo hash file
+loanpipe/extract/{oracle,vlm,ocr}.py   oracle đo trần rule; vlm gọi model; ocr = EasyOCR CPU + neo nhãn/cột, cache theo hash ảnh
 loanpipe/preprocess.py   deskew (VLM_PREPROCESS=deskew, mặc định tắt)
 loanpipe/{normalize,validate,schemas}.py   chuẩn hoá + validate field
 loanpipe/rules.py        rule R0–R8 đối chiếu chéo
@@ -17,6 +17,7 @@ loanpipe/pipeline.py     workflow tất định 6 bước (finalize_doc dùng ch
 loanpipe/agent.py        chế độ agent (--agent): LLM gọi tool, hàng rào trong code
 loanpipe/review.py       review queue
 loanpipe/evaluate.py     make eval → reports/<run_id>/{report.md, metrics.json, errors.csv, traces/}, reports/runs.csv
+loanpipe/compare.py      bảng so sánh biến thể từ metrics.json + paired diff route → reports/comparison.{md,csv}
 app.py                   Streamlit review UI
 ```
 
