@@ -1,6 +1,6 @@
 # Loan Document Pipeline
 
-**Demo:** https://loan-doc-pipeline.onrender.com (Render, Docker; trang [Tổng quan pipeline](https://loan-doc-pipeline.onrender.com/?page=overview) tóm tắt kết quả đo). Gói free ngủ khi lâu không ai vào: lần mở đầu chờ khoảng 1 phút. Dữ liệu tổng hợp, không upload, không gọi model. Bản cũ trên Streamlit Cloud (nhánh `main`, chưa có trang Tổng quan): https://loan-doc-pipeline-luongducthangws.streamlit.app/
+**Demo:** https://loan-doc-pipeline.onrender.com (Render, Docker; trang [Tổng quan pipeline](https://loan-doc-pipeline.onrender.com/?page=overview) tóm tắt kết quả đo). Gói free ngủ khi lâu không ai vào: lần mở đầu chờ khoảng 1 phút. Dữ liệu tổng hợp, không upload, không gọi model.
 
 MVP tự động hóa khâu tiếp nhận hồ sơ vay tiêu dùng cá nhân: **trích xuất** thông tin từ 4 loại giấy tờ → **đối chiếu chéo** bằng rule tất định → **route** mỗi bộ vào 1 trong 3 nhánh (auto-pass / người rà soát / yêu cầu bổ sung).
 
