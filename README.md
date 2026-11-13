@@ -1,6 +1,6 @@
 # Loan Document Pipeline
 
-**Demo giao diện rà soát:** https://loan-doc-pipeline-luongducthangws.streamlit.app/ (dữ liệu tổng hợp, không upload, không gọi model; app ngủ khi lâu không ai vào, bấm đánh thức rồi chờ khoảng nửa phút)
+**Demo:** https://loan-doc-pipeline.onrender.com (Render, Docker; trang [Tổng quan pipeline](https://loan-doc-pipeline.onrender.com/?page=overview) tóm tắt kết quả đo). Gói free ngủ khi lâu không ai vào: lần mở đầu chờ khoảng 1 phút. Dữ liệu tổng hợp, không upload, không gọi model. Bản cũ trên Streamlit Cloud (nhánh `main`): https://loan-doc-pipeline-luongducthangws.streamlit.app/
 
 MVP tự động hóa khâu tiếp nhận hồ sơ vay tiêu dùng cá nhân: **trích xuất** thông tin từ 4 loại giấy tờ → **đối chiếu chéo** bằng rule tất định → **route** mỗi bộ vào 1 trong 3 nhánh (auto-pass / người rà soát / yêu cầu bổ sung).
 
@@ -10,6 +10,26 @@ Câu hỏi dự án phải trả lời: *ở cấu hình nào pipeline tự xử
 
 Spec đầy đủ: [`docs/spec.md`](docs/spec.md). Cách sinh dữ liệu và giới hạn: [`docs/data_card.md`](docs/data_card.md).
 
+## Ảnh chụp demo
+
+Chụp từ bản chạy thật trên Render (13/11/2026).
+
+**Rà soát một hồ sơ**: ảnh gốc cạnh trường đã trích; rule không đạt (R1 họ tên lệch, R7 HĐLĐ hết hiệu lực) hiện bằng chứng, trường bị gắn cờ tô vàng kèm giá trị ở các giấy tờ khác để đối chiếu; thanh kết luận ở đáy.
+
+![Rà soát hồ sơ dev_0020](docs/img/review.png)
+
+**Hàng đợi rà soát**: KPI theo nhánh, lọc theo phân luồng / chất lượng ảnh, lý do gắn cờ theo mã rule.
+
+![Hàng đợi rà soát](docs/img/queue.png)
+
+<details><summary><b>Tổng quan pipeline</b> (kết quả đo, các bước, rule R0–R8, so sánh biến thể) và <b>giao diện mobile</b></summary>
+
+![Tổng quan pipeline](docs/img/overview.png)
+
+<img src="docs/img/mobile.png" alt="Giao diện mobile" width="320">
+
+</details>
+
 ## Trạng thái
 
 | Giai đoạn | Nội dung | Trạng thái |
@@ -18,7 +38,7 @@ Spec đầy đủ: [`docs/spec.md`](docs/spec.md). Cách sinh dữ liệu và gi
 | M1 | Bộ sinh dữ liệu: 3 layout/loại (C held-out), lỗi E1–E8, near-miss, 3 mức augmentation, manifest | ✅ |
 | M2 | Spike trích xuất VLM, gate: field quan trọng ≥ 90% trên dev clean | ✅ gate đạt; chọn Qwen3-VL-8B (dev clean: automation 53,8% = trần, escape 0); quy trình và benchmark: [`docs/m2_eval.md`](docs/m2_eval.md) |
 | M3 | Rule R0–R8, router, trace JSON, `make eval` | ✅ phần tất định, đã kiểm bằng oracle |
-| M4 | Review UI Streamlit, chạy test đóng băng 1 lần, demo | ✅ UI rà soát (`app.py`); ✅ test chạy 1 lần: escape 3/150 = 2,0% (cận trên 5,1%), automation 41,3%; ✅ [demo public](https://loan-doc-pipeline-luongducthangws.streamlit.app/) |
+| M4 | Review UI Streamlit, chạy test đóng băng 1 lần, demo | ✅ UI rà soát (`app.py`); ✅ test chạy 1 lần: escape 3/150 = 2,0% (cận trên 5,1%), automation 41,3%; ✅ [demo Render](https://loan-doc-pipeline.onrender.com) |
 
 M3 làm trước M2 có chủ đích: eval harness cần có sẵn để chấm M2, và chạy rule trên ground truth là cách duy nhất kiểm chứng nhãn của bộ sinh dữ liệu là đúng.
 

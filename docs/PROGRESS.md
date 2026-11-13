@@ -9,6 +9,10 @@
 - Docker: `docker build -t loan-doc-pipeline .` chạy review UI (healthcheck `/_stcore/health`), image ~900 MB; `DEMO_PASSWORD` bật cổng mật khẩu.
 - OCR vs VLM (dev 50 bộ, `docs/OCR_BENCHMARK.md`): VLM exact match 96,5 % / CER 0,007; EasyOCR (oracle-aligned) 65,7 % / CER 0,055; phân loại giấy tờ từ text OCR accuracy 0,988.
 
+## Demo Render + UI (2026-11-13)
+- https://loan-doc-pipeline.onrender.com (service `srv-dbrefil6e07s73bef4vg`, Docker, free, Singapore, nhánh `agent-mode`, auto-deploy). Free ngủ sau ~15 phút, lần mở đầu chờ ~1 phút; SQLite rà soát ở `/data` trong container, mất khi redeploy.
+- UI: thêm trang Tổng quan pipeline, nav có trạng thái active, responsive (kiểm bằng Playwright ở 390/900/1440px). 154 test pass. Ảnh chụp từ bản live trong `docs/img/`, nhúng vào README.
+
 ## Vấn đề mở
 - GPU không vào được từ 09/11; khoá FPT chỉ có Qwen2.5-VL-7B và server không bật tool calling native.
 - CI (`.github/workflows/ci.yml`) có từ 27/09 nhưng GitHub ghi 0 lần chạy tới 12/11; push 12/11 để kiểm tra.
