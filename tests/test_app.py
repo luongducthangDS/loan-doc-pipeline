@@ -80,6 +80,16 @@ def test_agent_panel(tmp_path, monkeypatch):
     assert any("finish(route=AUTO_PASS)" in c.value for c in at.caption)
 
 
+def test_overview_page(tmp_path, monkeypatch):
+    monkeypatch.setenv("REVIEW_DB", str(tmp_path / "r.sqlite"))
+    at = AppTest.from_file("../app.py", default_timeout=60)
+    at.query_params["page"] = "overview"
+    at.run()
+    page = html(at)
+    assert not at.exception and "Escape rate" in page and 'href="?page=overview" class="on"' in page
+    assert "?bundle=" not in page  # tổng quan không render hàng đợi
+
+
 def test_password_gate(tmp_path, monkeypatch):
     """DEMO_PASSWORD đặt -> chưa nhập đúng thì không lộ hàng đợi; nhập đúng thì vào."""
     monkeypatch.setenv("REVIEW_DB", str(tmp_path / "r.sqlite"))

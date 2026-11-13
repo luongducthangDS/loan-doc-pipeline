@@ -93,8 +93,49 @@ header[data-testid="stHeader"]{display:none}
   align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#E9D5A7}
 .tb .brand b{display:block;font-size:15px;font-weight:600}.tb .brand small{display:block;font-size:11.5px;color:#A9B8CF}
 .tb nav{display:flex;align-self:stretch}
-.stApp .tb nav a{display:flex;align-items:center;padding:0 14px;font-size:14px;font-weight:600;color:#fff;
-  border-bottom:2px solid #C9A45C;text-decoration:none}
+.stApp .tb nav a{display:flex;align-items:center;padding:0 14px;font-size:14px;font-weight:500;color:#C9D4E5;
+  border-bottom:2px solid transparent;text-decoration:none;transition:color .15s,border-color .15s}
+.stApp .tb nav a:hover{color:#fff;text-decoration:none}
+.stApp .tb nav a.on{color:#fff;font-weight:600;border-bottom-color:#C9A45C}
+.stApp a:focus-visible,.stApp .btn:focus-visible{outline:2px solid #C9A45C;outline-offset:2px;border-radius:4px}
+.qt:not(.head){transition:background .12s}.qt:not(.head):hover{background:#F7F9FC}
+.qwrap{overflow-x:auto;margin:0 -20px}.qwrap>.qt{min-width:1040px;margin:0}
+/* Tổng quan */
+.hero{margin:24px 0 8px;padding:32px 36px;border-radius:12px;color:#fff;
+  background:linear-gradient(135deg,#0B1F3A 0%,#1B3A66 60%,#24508A 100%)}
+.stApp .hero h1{margin:6px 0 10px;padding:0;font-size:30px;font-weight:700;letter-spacing:-.3px;color:#fff}
+.hero p{max-width:760px;margin:0;font-size:15px;line-height:1.6;color:#D5DEEB}
+.hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#E9D5A7}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.stApp .hero .btn.primary{background:#C9A45C;color:#0B1F3A}.stApp .hero .btn.sec{background:transparent;color:#fff;border-color:#4D6588}
+.sec-t{margin:28px 0 12px;font-size:17px;font-weight:600;color:#0B1F3A}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.step{position:relative;background:#fff;border:1px solid #DCE2EA;border-radius:10px;padding:18px 20px}
+.step .n{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;
+  background:#E6EDF7;color:#1B3A66;font-size:12.5px;font-weight:700}
+.step b{display:block;margin:10px 0 6px;font-size:15px;color:#0B1F3A}.step p{margin:0;font-size:13px;line-height:1.55;color:#4A5566}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  color:#9AA5B4;font-weight:700}
+.tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid #DCE2EA;border-radius:8px;overflow:hidden;font-size:13.5px}
+.tbl th{background:#F6F8FA;text-align:left;font-size:12px;font-weight:600;color:#4A5566;padding:10px 14px;border-bottom:1px solid #DCE2EA}
+.tbl td{padding:10px 14px;border-bottom:1px solid #EBEEF2}.tbl tr:last-child td{border-bottom:0}
+.tbl td.n,.tbl th.n{text-align:right}.tbl tr.base td{background:#F3F7FD;font-weight:600}
+.twrap{overflow-x:auto}.rgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rgrid div{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #DCE2EA;border-radius:8px;
+  padding:10px 14px;font-size:13px}
+.foot{margin-top:28px;font-size:12.5px;color:#5A6678}
+/* Màn hẹp: lưới co lại, bảng cuộn ngang thay vì vỡ cột */
+/* .stApp tiền tố: Streamlit có thể chèn lại rule gốc sau media query, cần độ ưu tiên cao hơn */
+@media (max-width:1100px){.stApp .kpis,.stApp .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stApp .step:not(:last-child)::after{display:none}.stApp .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stApp .facts{flex-wrap:wrap;row-gap:10px}.stApp .ph{flex-wrap:wrap;align-items:flex-start}}
+@media (max-width:640px){.stApp .block-container,.stApp [data-testid="stMainBlockContainer"]{padding:0 1rem 1.5rem}
+  .stApp .tb,.stApp .note,.stApp .case,.stApp .st-key-decision{margin:0 -1rem;padding-left:1rem;padding-right:1rem}
+  .stApp .tb{gap:12px}.stApp .tb .env,.stApp .tb .brand small,.stApp .tb .brand b{display:none}
+  .stApp .tb nav a{padding:0 8px;font-size:13px}
+  .stApp .kpis,.stApp .flow,.stApp .rgrid{grid-template-columns:minmax(0,1fr)}
+  .stApp .hero{padding:24px 20px}.stApp .hero h1{font-size:24px}.stApp .case .row{flex-wrap:wrap}
+  .stApp [data-testid="stLayoutWrapper"]:has(> .st-key-decision){position:static}}
 .tb .env{margin-left:auto;padding:5px 10px;border:1px solid #4D6588;border-radius:4px;font-size:11px;font-weight:600;
   letter-spacing:.6px;color:#DCE4EF}
 .note{display:flex;align-items:center;gap:10px;min-height:36px;margin:0 -2rem;padding:0 2rem;background:#FFF6E3;
@@ -307,9 +348,12 @@ con = st.cache_resource(rv.connect)()
 by_id = {e["bundle_id"]: e for e in entries}
 model = meta["model"].split("/")[-1].split("@")[0]
 
+page = "overview" if st.query_params.get("page") == "overview" else "queue"
+on = {p: ' class="on" aria-current="page"' if p == page else "" for p in ("queue", "overview")}
 st.html(f"<style>{ICON_CSS}</style>" + CSS + f"""
 <div class="tb"><div class="brand"><div class="mark">TĐ</div><div><b>Thẩm định Hồ sơ Vay</b>
-<small>Tín dụng tiêu dùng cá nhân</small></div></div><nav aria-label="Điều hướng chính"><a href="?">Hàng đợi</a></nav>
+<small>Tín dụng tiêu dùng cá nhân</small></div></div><nav aria-label="Điều hướng chính"><a href="?"{on['queue']}>Hàng đợi</a>
+<a href="?page=overview"{on['overview']}>Tổng quan pipeline</a></nav>
 <span class="env">DEMO · DỮ LIỆU TỔNG HỢP</span></div>
 <div class="note">{ico("warn")}<span><b>MẪU – DỮ LIỆU TỔNG HỢP.</b> Tên người, công ty, ngân hàng đều hư cấu. Demo không
 upload, không gọi model; ngưỡng rule là giả định cho demo, không phải chính sách tín dụng.</span></div>""")
@@ -363,10 +407,10 @@ def queue_view() -> None:
                     f'<span>{AUGMENT.get(by_id[b]["augment"], "—")}</span><span class="sd {cls}">{label}</span>'
                     f'<a class="act" href="?bundle={b}">{"Xem" if cls == "closed" or routes[b] == "AUTO_PASS" else "Rà soát"}</a></div>')
 
-        st.html('<div class="qt head"><span>Mã hồ sơ</span><span>Khách hàng</span><span class="r">Khoản vay</span>'
+        st.html('<div class="qwrap"><div class="qt head"><span>Mã hồ sơ</span><span>Khách hàng</span><span class="r">Khoản vay</span>'
                 '<span>Phân luồng</span><span>Lý do gắn cờ</span><span>Chất lượng ảnh</span><span>Trạng thái</span>'
                 '<span></span></div>' + ("".join(map(row, rows)) or '<div class="qempty">Không có hồ sơ khớp bộ lọc.</div>')
-                + f'<div class="qfoot"><span>Hiển thị {len(rows)} / {len(traces)} hồ sơ · sắp xếp theo mã hồ sơ</span>'
+                + f'</div><div class="qfoot"><span>Hiển thị {len(rows)} / {len(traces)} hồ sơ · sắp xếp theo mã hồ sơ</span>'
                 f'<span class="mono">run {esc(meta["run_id"][:15])} · commit {esc(meta["git_commit"])}</span></div>')
 
 
@@ -542,8 +586,58 @@ def detail_view(bid: str) -> None:
                 st.rerun()
 
 
+# ponytail: số liệu chép tay từ README (test đóng băng chạy 1 lần) và reports/comparison.md (dev 50 bộ); reports/
+# không vào image. Cập nhật tay khi chạy lại.
+RESULTS = [  # (biến thể, escape, cận trên 95 %, automation, false review, field acc, dòng mốc)
+    ("Oracle — đọc đúng 100 % (trần tầng rule)", "0,0 %", "11,3 %", "50,0 %", "0,0 %", "100 %", False),
+    ("Qwen3-VL-8B · 2 lượt tự nhất quán (chọn)", "0,0 %", "11,3 %", "44,0 %", "12,0 %", "99,4 %", True),
+    ("Qwen2.5-VL-7B · 2 lượt", "0,0 %", "11,3 %", "46,0 %", "8,0 %", "98,5 %", False),
+    ("EasyOCR + anchor (CPU, không VLM)", "0,0 %", "11,3 %", "8,0 %", "84,0 %", "72,3 %", False),
+]
+
+
+def overview_view() -> None:
+    n = Counter(t["decision"]["route"] for t in traces.values())
+    steps = [("Trích xuất", "VLM đọc 4 giấy tờ (CCCD, đơn vay, HĐLĐ, sao kê) ra JSON có cấu trúc; mỗi field kèm "
+              "chép nguyên văn và độ tin cậy, đọc 2 lượt để tự kiểm."),
+             ("Chuẩn hoá", "Ngày, tiền, tên có/không dấu đưa về một dạng để so khớp; field sai định dạng bị gắn cờ."),
+             ("Đối chiếu R0–R8", "9 rule tất định so chéo giữa các giấy tờ: họ tên, CCCD, thu nhập, hạn hiệu lực…"
+              " Rule không có LLM, cùng đầu vào luôn ra cùng kết quả."),
+             ("Phân luồng", "Router chọn 1 trong 3 nhánh: tự duyệt, cần rà soát, yêu cầu bổ sung. Nghi ngờ thì đẩy "
+              "sang người, không bao giờ đoán.")]
+    kpi = [("Escape rate (test)", "2,0 %", "3/150 bộ sai lọt tự duyệt · cận trên 95 % 5,1 %", "more", ico("warn")),
+           ("Automation (test)", "41,3 %", "trần lý thuyết 50 % (oracle)", "auto", ico("auto")),
+           ("Recall lỗi cài vào", "100 %", "mọi mã lỗi E1–E8 với oracle", "done", ico("check")),
+           ("Bộ mẫu trong demo", str(len(traces)), f"{n['AUTO_PASS']} tự duyệt · {n['REVIEW']} rà soát · "
+            f"{n['REQUEST_MORE']} bổ sung", "review", ico("queue"))]
+    rows = "".join(f'<tr{" class=base" if base else ""}><td>{esc(v)}</td>' + "".join(f'<td class="n">{x}</td>' for x in xs)
+                   + "</tr>" for v, *xs, base in RESULTS)
+    st.html(f"""<div class="hero"><div class="eyebrow">Dự án AI engineering · dữ liệu tổng hợp</div>
+<h1>Thẩm định hồ sơ vay tiêu dùng bằng VLM + rule tất định</h1>
+<p>Pipeline đọc bộ hồ sơ 4 giấy tờ, đối chiếu chéo bằng rule và quyết định bộ nào được tự duyệt. Thước đo chính là
+<b>escape rate</b>: tỉ lệ bộ có sai lệch bị tự duyệt nhầm. Bộ nào chưa chắc chắn đều vào hàng đợi để người rà soát
+xem ảnh gốc cạnh trường đã trích, sửa và chốt.</p>
+<div class="cta"><a class="btn primary" href="?">Mở hàng đợi rà soát {ico("right")}</a>
+<a class="btn sec" href="https://github.com/luongducthangDS/loan-doc-pipeline" target="_blank" rel="noopener">Mã nguồn trên GitHub</a></div></div>
+<div class="sec-t">Kết quả đo</div>
+<div class="kpis">{''.join(f'<div class="kpi"><div><span class="l">{l}</span><span class="v">{v}</span>'
+                           f'<span class="s">{s}</span></div><div class="ic {c}">{i}</div></div>' for l, v, s, c, i in kpi)}</div>
+<div class="sec-t">Pipeline</div>
+<div class="flow">{''.join(f'<div class="step"><span class="n">{k}</span><b>{t}</b><p>{p}</p></div>'
+                           for k, (t, p) in enumerate(steps, 1))}</div>
+<div class="sec-t">9 rule đối chiếu</div>
+<div class="rgrid">{''.join(f'<div><span class="pill mono unknown">{r}</span>{esc(ok)}</div>' for r, (ok, _, _) in RULES.items())}</div>
+<div class="sec-t">So sánh biến thể trích xuất · dev 50 bộ</div>
+<div class="twrap"><table class="tbl"><thead><tr><th>Biến thể</th><th class="n">Escape</th><th class="n">Cận trên 95 %</th>
+<th class="n">Automation</th><th class="n">False review</th><th class="n">Field acc</th></tr></thead><tbody>{rows}</tbody></table></div>
+<div class="foot">Escape 0 trên dev chưa đủ kết luận an toàn (chỉ 25 bộ có lỗi), nên luôn báo kèm cận trên 95 %. Test set
+150 bộ chỉ chạy một lần với cấu hình đã chọn. Demo đọc kết quả đã chạy sẵn: không upload, không gọi model.</div>""")
+
+
 bid = st.query_params.get("bundle")
-if bid in traces:
+if page == "overview":
+    overview_view()
+elif bid in traces:
     detail_view(bid)
 else:
     queue_view()
