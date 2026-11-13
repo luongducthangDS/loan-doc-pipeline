@@ -190,3 +190,32 @@ def test_from_env_throttles_and_parses_native_tool_calls(monkeypatch):
     assert time.monotonic() - t0 >= 0.09  # 600 RPM -> cách nhau >= 0.1 s
     assert a["tool_calls"][0]["function"]["name"] == "list_documents" and "extra_content" in b
     assert a["_usage"]["prompt_tokens"] == 10 and llm.model == "gemini-test"
+
+
+def test_model_pool_fails_over_and_sticks(monkeypatch):
+    """AGENT_MODEL nhiều model: model hết hạn mức ngày (429 PerDay) bị bỏ, lượt sau dùng model kế; một bộ đã
+    dùng model nào thì các lượt sau của bộ đó giữ model ấy; _model không bị gửi lên API."""
+    import io
+    import urllib.error
+
+    from loanpipe import agent
+    from loanpipe.extract import vlm
+    for k, v in {"AGENT_API_BASE": "http://x/v1", "AGENT_API_KEY": "k", "AGENT_MODEL": "a:0:100, b, c",
+                 "AGENT_TOOL_MODE": "native", "AGENT_RPM": ""}.items():
+        monkeypatch.setenv(k, v)
+    sent = []
+
+    def post(url, key, payload):
+        sent.append(payload)
+        assert all(not k.startswith("_") for m in payload["messages"] for k in m)
+        if payload["model"] == "a":
+            raise urllib.error.HTTPError(url, 429, "quota", {}, io.BytesIO(b'{"quotaId": "GenerateRequestsPerDay"}'))
+        return {"choices": [{"message": call("list_documents")}]}
+    monkeypatch.setattr(vlm, "http_post", post)
+    llm = agent.from_env()
+    assert llm.model == "pool(a,b,c)"
+    first = llm([{"role": "user", "content": "x"}], agent.TOOLS)
+    assert [p["model"] for p in sent] == ["a", first["_model"]] and first["_model"] in ("b", "c")
+    sent.clear()
+    llm([{"role": "user", "content": "x"}, first, {"role": "tool", "tool_call_id": "1", "content": "{}"}], agent.TOOLS)
+    assert [p["model"] for p in sent] == [first["_model"]]  # dính model của bộ, không thử lại a

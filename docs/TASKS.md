@@ -11,7 +11,7 @@ Milestone gốc: [spec.md](spec.md) mục 12.
 
 ## Tiếp theo (lần lượt từ trên xuống)
 - [x] Adapter OCR (EasyOCR + anchor) chạy end-to-end qua rules/router thành B1: dev 50 bộ, escape 0/25, automation 8 %, field acc 72,3 %; phân biệt oracle-aligned và thêm vào comparison
-- [ ] Chạy agent B5b trên dev với Gemini (`gemini-3.8-flash`, tool calling native, `AGENT_RPM=15`), VLM từ cache: đo nhánh, escape, lượt LLM/bộ, số bộ chốt trước LLM. Chờ user thêm `AGENT_API_KEY` vào `.env`
+- [ ] Chạy agent B5b trên dev với pool Gemini (Flash Lite 3.1/3.5 làm chính, các bản Flash 20 RPD làm dự phòng; tool calling native), VLM từ cache: đo nhánh, escape, lượt LLM/bộ, số bộ chốt trước LLM, tách theo model. Chờ user thêm `AGENT_API_KEY` vào `.env`; kiểm tên model bằng `GET <base>/models` trước
 - [ ] Bật GPU (a30 timeout cổng 22, vast refused ngày 09/11), chạy vLLM Qwen3-VL-8B với `--enable-auto-tool-choice --tool-call-parser hermes`, chạy lại `--agent` native trên dev: đọc lại có cứu 3 bộ false review không
 - [ ] Đo tác động của deskew lên trích xuất trên dev (cần GPU)
 - [ ] Tinh chỉnh prompt agent trên dev nếu vẫn không dừng sớm ở bộ thiếu giấy tờ

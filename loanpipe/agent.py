@@ -224,7 +224,7 @@ def run_bundle_agent(inp: BundleInput, extractor: Extractor, rules_cfg: RulesCon
     s = Session(inp, extractor, rules_cfg, thr, check_files)
     log: dict = {"model": getattr(llm, "model", "?"), "turns": 0, "steps": [], "note": None,
                  "finished_by": "fallback", "rejections": 0, "error": None,
-                 "llm_ms": 0, "llm_tokens_in": 0, "llm_tokens_out": 0, "llm_cost_usd": 0.0}
+                 "llm_ms": 0, "llm_tokens_in": 0, "llm_tokens_out": 0, "llm_cost_usd": 0.0, "models": []}
     msgs = [{"role": "system", "content": SYSTEM},
             {"role": "user", "content": f"Tiền kiểm bộ hồ sơ {inp.bundle_id}."}]
     docs = s.tool_list_documents()
@@ -242,6 +242,8 @@ def run_bundle_agent(inp: BundleInput, extractor: Extractor, rules_cfg: RulesCon
             log["llm_tokens_in"] += u.get("prompt_tokens", 0)
             log["llm_tokens_out"] += u.get("completion_tokens", 0)
             log["llm_cost_usd"] += msg.pop("_cost_usd", 0.0)
+            if (used := msg.get("_model")) and used not in log["models"]:  # pool: model thật đã trả lời bộ này
+                log["models"].append(used)
             msgs.append(msg)
             calls = msg.get("tool_calls") or []
             if not calls:  # model trả lời bằng chữ: nhắc dùng tool
@@ -330,9 +332,32 @@ def parse_json_reply(text: str, turn: int) -> dict:
         "function": {"name": obj["tool"], "arguments": json.dumps(obj.get("args") or {}, ensure_ascii=False)}}]}
 
 
+class _Model:
+    """Một model trong pool AGENT_MODEL ("tên[:rpm[:rpd]]"): giới hạn tốc độ và hạn mức ngày riêng, đếm phía client."""
+
+    def __init__(self, spec: str, default_rpm: float = 0.0):
+        name, *lim = spec.strip().split(":")
+        rpm = float(lim[0]) if lim and lim[0] else default_rpm
+        self.name, self.gap = name, (60 / rpm if rpm > 0 else 0.0)
+        self.rpd = int(lim[1]) if len(lim) > 1 and lim[1] else None
+        self.used, self.last, self.dead = 0, 0.0, False
+        self.lock = threading.Lock()
+
+    def available(self) -> bool:
+        return not self.dead and (self.rpd is None or self.used < self.rpd)
+
+    def throttle(self) -> None:
+        with self.lock:
+            time.sleep(max(0.0, self.last + self.gap - time.monotonic()))
+            self.last = time.monotonic()
+            self.used += 1
+
+
 def from_env() -> Callable[[list, list], dict]:
     """LLM điều phối qua API tương thích OpenAI, cần tool calling (vLLM: --enable-auto-tool-choice
-    --tool-call-parser hermes cho Qwen). Mặc định dùng chung endpoint/model với VLM."""
+    --tool-call-parser hermes cho Qwen). Mặc định dùng chung endpoint/model với VLM.
+    AGENT_MODEL nhận nhiều model cách nhau dấu phẩy, mỗi cái "tên[:rpm[:rpd]]" (vd hạn mức free của Gemini):
+    mỗi bộ hồ sơ dính một model, chỉ đổi khi model đó trả 429 hết hạn mức."""
     from loanpipe.extract import load_dotenv
     from loanpipe.extract.vlm import http_post
     load_dotenv()
@@ -349,38 +374,51 @@ def from_env() -> Callable[[list, list], dict]:
     if mode not in ("native", "json"):
         raise SystemExit(f"AGENT_TOOL_MODE không hợp lệ: {mode!r} (native | json)")
 
-    # Giới hạn lượt/phút phía client (vd Gemini free 15 RPM), dùng chung mọi worker.
-    # ponytail: một khoá toàn cục, đủ cho 1 key; nhiều key/endpoint thì mỗi cái một khoá
-    rpm = float(os.environ.get("AGENT_RPM") or 0)
-    gap = 60 / rpm if rpm > 0 else 0.0
-    lock, last = threading.Lock(), [0.0]
+    pool = [_Model(spec, float(os.environ.get("AGENT_RPM") or 0)) for spec in model.split(",") if spec.strip()]
 
-    def throttle() -> None:
-        with lock:
-            time.sleep(max(0.0, last[0] + gap - time.monotonic()))
-            last[0] = time.monotonic()
-
-    def post(payload: dict) -> dict:
-        for wait in (2, 4, 8, 16, 32, 60, None):  # 429 / 5xx: backoff luỹ thừa; lỗi khác/hết lượt -> ném ra (fallback)
-            throttle()
+    def post(m: _Model, payload: dict) -> dict:
+        for wait in (5, 15, 30, None):  # 429 theo phút / 5xx: chờ rồi thử lại cùng model
+            m.throttle()
             try:
-                return http_post(url, key, payload)
+                return http_post(url, key, {**payload, "model": m.name})
             except urllib.error.HTTPError as e:
+                body = e.read().decode("utf-8", "replace") if e.fp else ""
+                if e.code == 429 and ("PerDay" in body or "per_day" in body.lower()):
+                    m.dead = True  # hết hạn mức ngày: bỏ model này cho cả lần chạy
+                    raise
                 if wait is None or (e.code != 429 and e.code < 500):
                     raise
                 time.sleep(wait)
+        raise AssertionError("unreachable")
 
     def llm(messages: list, tool_spec: list) -> dict:
-        if mode == "json":
-            resp = post({"model": model, "temperature": 0, "max_tokens": 1024,
-                         "messages": to_json_mode(messages, tool_spec)})
-            msg = parse_json_reply(resp["choices"][0]["message"].get("content") or "", len(messages))
+        clean = [{k: v for k, v in x.items() if not k.startswith("_")} for x in messages]  # _model chỉ dùng nội bộ
+        sticky = next((x["_model"] for x in reversed(messages) if x.get("_model")), None)
+        now = time.monotonic()  # model đang rảnh trước, trong đó theo thứ tự khai báo (model chính đặt đầu danh sách)
+        alive = sorted((m for m in pool if m.available()), key=lambda m: (m.last + m.gap > now, pool.index(m)))
+        order = [m for m in alive if m.name == sticky] + [m for m in alive if m.name != sticky]
+        if not order:
+            raise urllib.error.URLError("mọi model trong AGENT_MODEL đã hết hạn mức")
+        err: Exception | None = None
+        for m in order:  # model của bộ này trước; hết lượt thì chuyển model khác (ghi vào agent.models)
+            try:
+                if mode == "json":
+                    resp = post(m, {"temperature": 0, "max_tokens": 1024, "messages": to_json_mode(clean, tool_spec)})
+                    msg = parse_json_reply(resp["choices"][0]["message"].get("content") or "", len(messages))
+                else:
+                    resp = post(m, {"temperature": 0, "max_tokens": 1024, "messages": clean, "tools": tool_spec,
+                                    "tool_choice": "auto"})
+                    msg = resp["choices"][0]["message"]
+                break
+            except urllib.error.HTTPError as e:
+                if e.code != 429:
+                    raise
+                err = e
         else:
-            resp = post({"model": model, "temperature": 0, "max_tokens": 1024,
-                         "messages": messages, "tools": tool_spec, "tool_choice": "auto"})
-            msg = resp["choices"][0]["message"]
+            raise err or urllib.error.URLError("không gọi được model nào")
         u = resp.get("usage") or {}
-        return {**msg, "_usage": u,
+        return {**msg, "_usage": u, "_model": m.name,
                 "_cost_usd": (u.get("prompt_tokens", 0) * p_in + u.get("completion_tokens", 0) * p_out) / 1e6}
-    llm.model = model + ("+json" if mode == "json" else "")  # type: ignore[attr-defined]
+    names = [m.name for m in pool]
+    llm.model = (names[0] if len(names) == 1 else "pool(" + ",".join(names) + ")")         + ("+json" if mode == "json" else "")  # type: ignore[attr-defined]
     return llm

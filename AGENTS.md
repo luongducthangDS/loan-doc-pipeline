@@ -14,6 +14,7 @@ Pipeline hồ sơ vay tiêu dùng: VLM trích xuất 4 giấy tờ → rule tấ
 ## Gotchas
 - Dùng `.venv/Scripts/python.exe`; `python` mặc định trỏ venv DocuMind, thiếu streamlit.
 - Khoá FPT trong `.env` chỉ có `Qwen2.5-VL-7B-Instruct`, server không bật tool calling native → `AGENT_TOOL_MODE=json`.
+- LLM agent dự kiến dùng Gemini free: hạn mức mỗi model nhỏ (Flash 20 RPD, Flash Lite 500 RPD) nên `AGENT_MODEL` là pool `tên:rpm:rpd,...`; mỗi bộ dính một model, `agent.models` trong trace ghi model thật đã dùng. Trộn model làm kết quả lẫn, báo cáo tách theo `bundles_by_model`.
 - GPU: bật VM trên console, `ssh -N a30`, rồi chạy vLLM.
 - Không commit `gemini.md`, `.claude/`.
 - Render CLI đã đăng nhập (`render services`, `render deploys list <srv>`); service tạo bằng `render services create`, không qua Blueprint sync. Từ Git Bash phải đặt `MSYS_NO_PATHCONV=1`, không thì tham số `/...` bị đổi thành đường dẫn Windows.
