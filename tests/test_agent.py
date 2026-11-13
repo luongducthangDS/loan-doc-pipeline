@@ -71,16 +71,21 @@ def test_careful_agent_matches_workflow(manifest):
     traces = {e["bundle_id"]: run(manifest, e, careful_policy) for e in manifest}
     for e in manifest:
         assert traces[e["bundle_id"]]["decision"]["route"] == baseline(manifest, e)["decision"]["route"]
-        assert traces[e["bundle_id"]]["agent"]["finished_by"] == "agent"
+        assert traces[e["bundle_id"]]["agent"]["finished_by"] == ("agent" if len(e["docs"]) == 4 else "guardrail")
     m = compute_metrics(manifest, traces, thr)[0]
     assert m["end_to_end"]["escape_rate"] == 0
     json.dumps(traces)
 
 
-def test_missing_doc_stops_early_without_vlm_calls(manifest):
+def test_missing_doc_stops_before_llm(manifest):
+    """R0 fail được code chốt trước vòng LLM: 0 lượt LLM, 0 lượt VLM, kể cả khi LLM định chọn REVIEW."""
     e = next(e for e in manifest if len(e["docs"]) < 4)
-    t = run(manifest, e, careful_policy)
+
+    def must_not_call(messages, tools):
+        raise AssertionError("LLM không được gọi khi R0 fail")
+    t = run(manifest, e, must_not_call)
     assert t["decision"]["route"] == "REQUEST_MORE" and t["n_calls"] == 0
+    assert t["agent"]["turns"] == 0 and t["agent"]["finished_by"] == "guardrail" and t["agent"]["error"] is None
 
 
 def scripted(*msgs):
@@ -98,13 +103,6 @@ def test_early_review_is_allowed(manifest, clean):
     t = run(manifest, clean, scripted(call("read_document", doc_type="cccd"),
                                       call("finish", route="REVIEW", note="dừng sớm")))
     assert t["decision"]["route"] == "REVIEW" and t["agent"]["finished_by"] == "agent" and t["n_calls"] == 2
-
-
-def test_missing_doc_cannot_go_to_review(manifest):
-    e = next(e for e in manifest if len(e["docs"]) < 4)
-    t = run(manifest, e, scripted(call("finish", route="REVIEW", note="x"),
-                                  call("finish", route="REQUEST_MORE", note="thiếu giấy tờ")))
-    assert t["agent"]["rejections"] == 1 and t["decision"]["route"] == "REQUEST_MORE"
 
 
 class BlurryCccd(OracleExtractor):

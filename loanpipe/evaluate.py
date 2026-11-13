@@ -238,6 +238,7 @@ def compute_metrics(entries: list[dict], traces: dict[str, dict], thr) -> tuple[
             "llm_turns_per_bundle": statistics.mean(a["turns"] for a in agent),
             "llm_tokens_per_bundle": statistics.mean(a["llm_tokens_in"] + a["llm_tokens_out"] for a in agent),
             "fallback": sum(a["finished_by"] == "fallback" for a in agent),
+            "closed_before_llm": sum(a["finished_by"] == "guardrail" for a in agent),  # R0 fail, 0 lượt LLM
             "guardrail_rejections": sum(a["rejections"] for a in agent),
             "llm_errors": sum(bool(a["error"]) for a in agent),
             "docs_read_per_bundle": statistics.mean(len(t["extractions"]) for t in traces.values()),
@@ -301,6 +302,7 @@ def render_report(meta: dict, m: dict, prev: dict | None) -> str:
         L += ["## Agent", "",
               f"- Lượt gọi LLM / token mỗi bộ: {ag['llm_turns_per_bundle']:.1f} / {ag['llm_tokens_per_bundle']:.0f}",
               f"- Giấy tờ đã đọc mỗi bộ: {ag['docs_read_per_bundle']:.2f} / 4 (dừng sớm khi đã đủ căn cứ)",
+              f"- Chốt REQUEST_MORE bằng code trước LLM (R0 fail): {ag.get('closed_before_llm', 0)} bộ",
               f"- Guardrail từ chối `finish`: {ag['guardrail_rejections']} lần",
               f"- Hết lượt / LLM lỗi -> dùng router: {ag['fallback']} bộ ({ag['llm_errors']} do lỗi LLM)", ""]
     return "\n".join(L)

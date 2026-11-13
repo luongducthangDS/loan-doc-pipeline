@@ -226,6 +226,11 @@ def run_bundle_agent(inp: BundleInput, extractor: Extractor, rules_cfg: RulesCon
                  "llm_ms": 0, "llm_tokens_in": 0, "llm_tokens_out": 0, "llm_cost_usd": 0.0}
     msgs = [{"role": "system", "content": SYSTEM},
             {"role": "user", "content": f"Tiền kiểm bộ hồ sơ {inp.bundle_id}."}]
+    docs = s.tool_list_documents()
+    if docs["missing"] or s.unreadable:  # R0 fail: code chốt REQUEST_MORE, 0 lượt LLM và 0 lượt VLM
+        log["steps"] += [{"tool": "list_documents", "args": {}, "result": docs},
+                         {"tool": "finish", "args": {"route": "REQUEST_MORE"},
+                          "result": s.tool_finish("REQUEST_MORE", docs["hint"])}]
     try:
         while log["turns"] < max_turns and s.final is None:
             t1 = time.perf_counter()
@@ -260,7 +265,7 @@ def run_bundle_agent(inp: BundleInput, extractor: Extractor, rules_cfg: RulesCon
 
     checks, d = s.evaluate()
     if s.final is not None:
-        log["finished_by"], log["note"], d = "agent", s.note, s.final
+        log["finished_by"], log["note"], d = "agent" if log["turns"] else "guardrail", s.note, s.final
     log["rejections"] = s.rejections
     extractions = [Extraction(bundle_id=inp.bundle_id, doc_id=s.docs[dt].doc_id, doc_type=dt, fields=f,
                               model=extractor.name, prompt_version=extractor.prompt_version,
