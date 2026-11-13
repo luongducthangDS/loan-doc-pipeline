@@ -1,6 +1,6 @@
 # Loan Document Pipeline
 
-**Demo:** https://loan-doc-pipeline.onrender.com (Render, Docker; trang [Tổng quan pipeline](https://loan-doc-pipeline.onrender.com/?page=overview) tóm tắt kết quả đo). Gói free ngủ khi lâu không ai vào: lần mở đầu chờ khoảng 1 phút. Dữ liệu tổng hợp, không upload, không gọi model. Bản cũ trên Streamlit Cloud (nhánh `main`): https://loan-doc-pipeline-luongducthangws.streamlit.app/
+**Demo:** https://loan-doc-pipeline.onrender.com (Render, Docker; trang [Tổng quan pipeline](https://loan-doc-pipeline.onrender.com/?page=overview) tóm tắt kết quả đo). Gói free ngủ khi lâu không ai vào: lần mở đầu chờ khoảng 1 phút. Dữ liệu tổng hợp, không upload, không gọi model.
 
 MVP tự động hóa khâu tiếp nhận hồ sơ vay tiêu dùng cá nhân: **trích xuất** thông tin từ 4 loại giấy tờ → **đối chiếu chéo** bằng rule tất định → **route** mỗi bộ vào 1 trong 3 nhánh (auto-pass / người rà soát / yêu cầu bổ sung).
 
@@ -95,7 +95,7 @@ docker run -p 8501:8501 -v loan-review:/data -e DEMO_PASSWORD=<mật khẩu> loa
 docker run --rm loan-doc-pipeline python -m pytest -q    # 124 test
 ```
 
-`DEMO_PASSWORD` để trống thì demo mở công khai (như bản trên Streamlit Cloud); đặt giá trị thì phải nhập mật khẩu trước khi thấy hàng đợi.
+`DEMO_PASSWORD` để trống thì demo mở công khai (như demo trên Render); đặt giá trị thì phải nhập mật khẩu trước khi thấy hàng đợi.
 
 Deploy (Streamlit Community Cloud, Render, Railway): cài `requirements.txt`, lệnh chạy `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`. SQLite nằm trên đĩa tạm của nền tảng, mất khi redeploy: đủ cho demo.
 

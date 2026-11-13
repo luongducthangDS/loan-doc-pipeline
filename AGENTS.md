@@ -5,9 +5,9 @@ Pipeline hồ sơ vay tiêu dùng: VLM trích xuất 4 giấy tờ → rule tấ
 Đọc trước khi làm: [docs/RULES.md](docs/RULES.md) > [docs/PRD.md](docs/PRD.md) (bản đầy đủ: [spec.md](docs/spec.md)) > [ARCHITECTURE](docs/ARCHITECTURE.md), [DESIGN](docs/DESIGN.md), [TASKS](docs/TASKS.md), [PROGRESS](docs/PROGRESS.md). Khác: `data_card.md`, `m2_eval.md`, `quality-engineering.md`.
 
 ## Trạng thái (2026-11-13)
-- Nhánh `agent-mode` đã push lên `origin/agent-mode`, chưa merge vào `main` (main deploy demo Streamlit). Gồm QE `0d74c37`, deskew `9163fbf`, agent `2ee4eb3`.
+- Nhánh `agent-mode` đã push lên `origin/agent-mode`, chưa merge vào `main`. Gồm QE `0d74c37`, deskew `9163fbf`, agent `2ee4eb3`.
 - Test đóng băng: escape 2,0 %, automation 41,3 %; agent mode đo trên dev, chưa đọc lại được vì GPU tắt. Chi tiết ở `docs/PROGRESS.md`.
-- Demo Render (13/11): https://loan-doc-pipeline.onrender.com, deploy từ `agent-mode` qua `render.yaml`/Dockerfile (`$PORT`). Demo Streamlit Cloud cũ vẫn chạy từ `main`.
+- Demo Render (13/11): https://loan-doc-pipeline.onrender.com, deploy từ `agent-mode` qua `render.yaml`/Dockerfile (`$PORT`). Đây là demo duy nhất (đã bỏ bản Streamlit Cloud 13/11).
 - Việc tiếp theo: mục đầu tiên chưa tick trong `docs/TASKS.md` (cần GPU).
 
 ## Gotchas

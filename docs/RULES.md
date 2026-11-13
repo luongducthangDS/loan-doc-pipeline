@@ -10,7 +10,7 @@
 
 ## Quy ước
 - Dùng `.venv/Scripts/python.exe` của repo (có streamlit); `python` mặc định trỏ venv DocuMind và skip `tests/test_app.py`.
-- `main` đang deploy demo Streamlit; việc mới làm trên nhánh riêng.
+- Demo Render auto-deploy từ `agent-mode`: push lên nhánh này là lên demo, chạy test trước. Việc mới làm trên nhánh riêng.
 
 ## AI không bao giờ được
 - Commit `gemini.md`, `.claude/`, `.env`.
